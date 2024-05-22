@@ -33,11 +33,15 @@ tree("Attack")
             fallback
                 sequence
                     IsPlayerMovingTowardsSelf
-                    Hide
+                    sequence
+                        sequence
+                            IsAtHidingLocation
+                            MoveToHidingLocation
+                        Hide
                 sequence
                     IsWithinAttackRange
                     Attack
-        seqence
+        sequence
             HasFledFromPlayer
             Flee
 

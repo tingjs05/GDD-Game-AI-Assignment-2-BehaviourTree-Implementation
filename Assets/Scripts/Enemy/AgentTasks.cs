@@ -99,6 +99,18 @@ public class AgentTasks : MonoBehaviour
     }
 
     [Task]
+    bool IsAtHidingLocation()
+    {
+        return false;
+    }
+
+    [Task]
+    void MoveToHidingLocation()
+    {
+        
+    }
+
+    [Task]
     void Hide()
     {
         

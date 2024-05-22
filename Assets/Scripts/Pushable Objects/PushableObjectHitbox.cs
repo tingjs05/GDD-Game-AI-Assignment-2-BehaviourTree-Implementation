@@ -25,7 +25,7 @@ public class PushableObjectHitbox : MonoBehaviour
         }
         else if (other.CompareTag("Enemy"))
         {
-            other.GetComponent<EnemyController>()?.Stun();
+            other.GetComponent<AgentController>()?.Stun();
             other.GetComponent<IDamagable>()?.Damage(1f);
         }
     }
