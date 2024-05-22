@@ -35,7 +35,7 @@ tree("Attack")
                     IsPlayerMovingTowardsSelf
                     Hide
                 sequence
-                    IsWithinAttackRance
+                    IsWithinAttackRange
                     Attack
         seqence
             HasFledFromPlayer
