@@ -16,6 +16,8 @@ GameObject:
   - component: {fileID: 2910863570287769566}
   - component: {fileID: 6492589604233003576}
   - component: {fileID: 8621019235953051546}
+  - component: {fileID: 6844818591035314140}
+  - component: {fileID: 4145416102651812882}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Enemy
@@ -195,30 +197,79 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b043efd86e82d44c9ed629b73d94b66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &6844818591035314140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2389737504405581130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e970c541047f7244da81aff5355e2d10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   maxHealth: 3
   healthBar: {fileID: 7456401297173618960}
-  WalkSpeed: 3
-  RunSpeed: 6
-  SneakSpeed: 2
-  PatrolRadius: 3
-  AlertRadius: 3.5
-  AttackRange: 1
-  FleeDistance: 5
-  PlayerInObstacleRange: 3
-  AttackDuration: 0.25
-  MaxFleeDuration: 5
-  MinFaceEnemyDuration: 0.5
-  MaxHideDuration: 5
-  MaxWaitDuration: 5
-  StunDuration: 3
-  PushDuration: 1.5
-  LayTrapDuration: 1
-  PushCheckCooldown: {x: 3, y: 5}
-  PlaceTrapCooldown: {x: 3, y: 5}
+  <WalkSpeed>k__BackingField: 3
+  <RunSpeed>k__BackingField: 6
+  <SneakSpeed>k__BackingField: 2
+  <PatrolRadius>k__BackingField: 3
+  <AlertRadius>k__BackingField: 3.5
+  <AttackRange>k__BackingField: 1
+  <FleeDistance>k__BackingField: 5
+  <PlayerInObstacleRange>k__BackingField: 3
+  <AttackDuration>k__BackingField: 0.25
+  <MaxFleeDuration>k__BackingField: 5
+  <MinFaceEnemyDuration>k__BackingField: 0.5
+  <MaxHideDuration>k__BackingField: 5
+  <MaxWaitDuration>k__BackingField: 5
+  <StunDuration>k__BackingField: 3
+  <PushDuration>k__BackingField: 1.5
+  <LayTrapDuration>k__BackingField: 1
+  <PushCheckCooldown>k__BackingField: {x: 3, y: 5}
+  <PlaceTrapCooldown>k__BackingField: {x: 3, y: 5}
   facingEnemyThreshold: 0.8
-  MinHideDistanceThreshold: 3
-  PushTransitionChance: 0.3
-  LayTrapChance: 0.3
+  <MinHideDistanceThreshold>k__BackingField: 3
+  <PushTransitionChance>k__BackingField: 0.3
+  <LayTrapChance>k__BackingField: 0.3
+  trapPrefab: {fileID: 0}
+--- !u!114 &4145416102651812882
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2389737504405581130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e970c541047f7244da81aff5355e2d10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 3
+  healthBar: {fileID: 7456401297173618960}
+  <WalkSpeed>k__BackingField: 3
+  <RunSpeed>k__BackingField: 6
+  <SneakSpeed>k__BackingField: 2
+  <PatrolRadius>k__BackingField: 3
+  <AlertRadius>k__BackingField: 3.5
+  <AttackRange>k__BackingField: 1
+  <FleeDistance>k__BackingField: 5
+  <PlayerInObstacleRange>k__BackingField: 3
+  <AttackDuration>k__BackingField: 0.25
+  <MaxFleeDuration>k__BackingField: 5
+  <MinFaceEnemyDuration>k__BackingField: 0.5
+  <MaxHideDuration>k__BackingField: 5
+  <MaxWaitDuration>k__BackingField: 5
+  <StunDuration>k__BackingField: 3
+  <PushDuration>k__BackingField: 1.5
+  <LayTrapDuration>k__BackingField: 1
+  <PushCheckCooldown>k__BackingField: {x: 3, y: 5}
+  <PlaceTrapCooldown>k__BackingField: {x: 3, y: 5}
+  facingEnemyThreshold: 0.8
+  <MinHideDistanceThreshold>k__BackingField: 3
+  <PushTransitionChance>k__BackingField: 0.3
+  <LayTrapChance>k__BackingField: 0.3
   trapPrefab: {fileID: 6860700613610902670, guid: ecf8b12b56a8ff04bb334fb142fb3807, type: 3}
 --- !u!1001 &4660696405370431976
 PrefabInstance:
