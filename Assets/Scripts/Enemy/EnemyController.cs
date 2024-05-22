@@ -102,4 +102,21 @@ public class EnemyController : MonoBehaviour, IDamagable
         if (coroutine != null) StopCoroutine(coroutine);
         coroutine = StartCoroutine(CountDuration(StunDuration, Stunned));
     }
+
+    // gizmos
+    void OnDrawGizmosSelected()
+    {
+        // show patrol radius
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, PatrolRadius);
+        // show alert radius
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(transform.position, AlertRadius);
+        // show attack range
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, AttackRange);
+        // show flee distance
+        Gizmos.color = Color.white;
+        Gizmos.DrawWireSphere(transform.position, FleeDistance);
+    }
 }
