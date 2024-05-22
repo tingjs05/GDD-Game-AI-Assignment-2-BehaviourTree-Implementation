@@ -4,8 +4,8 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(NavMeshAgent), typeof(EnemyBotTasks))]
-public class EnemyController : MonoBehaviour, IDamagable
+[RequireComponent(typeof(NavMeshAgent))]
+public class AgentController : MonoBehaviour, IDamagable
 {
     // inspector values
     [Header("Health")]

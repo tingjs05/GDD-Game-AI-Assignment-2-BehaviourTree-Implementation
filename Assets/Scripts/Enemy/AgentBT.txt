@@ -1,0 +1,61 @@
+tree("Root")
+    repeat
+        fallback
+            tree("Priorities")
+            tree("Attack")
+            tree("Lay Trap")
+            tree("Push")
+            tree("Patrol")
+
+tree("Priorities")
+    fallback
+        sequence
+            IsDead
+            Die
+        sequence
+            IsStunned
+            Stun
+        sequence
+            IsTrapTriggered
+            IsAtTrapLocation
+            MoveToTrap
+
+
+tree("Attack")
+    sequence
+        sequence
+            IsAlerted
+            Alert
+        sequence
+            sequence
+                IsPlayerSeen
+                Prowl
+            fallback
+                sequence
+                    IsPlayerMovingTowardsSelf
+                    Hide
+                sequence
+                    IsWithinAttackRance
+                    Attack
+        seqence
+            HasFledFromPlayer
+            Flee
+
+tree("Lay Trap")
+    sequence
+        IsAtCorridor
+        LayTrap
+
+tree("Push")
+    sequence
+        sequence
+            IsAtWaitLocation
+            MoveToWaitLocation
+        sequence
+            IsWithinPushRange
+            Push
+
+tree("Patrol")
+    sequence
+        HasReachedTargetLocation
+        SetNewPatrolDestination
