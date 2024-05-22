@@ -130,6 +130,7 @@ public class AgentTasks : MonoBehaviour
     }
 
     // flee
+    [Task]
     bool HasFledFromPlayer()
     {
         return false;
@@ -143,6 +144,7 @@ public class AgentTasks : MonoBehaviour
 
     // lay trap tree
     // lay trap
+    [Task]
     bool IsAtCorridor()
     {
         return false;
@@ -156,6 +158,7 @@ public class AgentTasks : MonoBehaviour
 
     // push tree
     // wait
+    [Task]
     bool IsAtWaitLocation()
     {
         return false;
@@ -168,6 +171,7 @@ public class AgentTasks : MonoBehaviour
     }
 
     // push
+    [Task]
     bool IsWithinPushRange()
     {
         return false;
@@ -181,6 +185,7 @@ public class AgentTasks : MonoBehaviour
 
     // patrol tree
     // patrol
+    [Task]
     bool HasReachedTargetLocation()
     {
         return false;
