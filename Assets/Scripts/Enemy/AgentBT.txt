@@ -58,4 +58,4 @@ tree("Push")
 tree("Patrol")
     sequence
         HasReachedTargetLocation
-        SetNewPatrolDestination
+        Patrol
