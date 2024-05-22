@@ -23,45 +23,51 @@ public class AgentTasks : MonoBehaviour
     [Task]
     bool IsDead()
     {
-        return false;
+        // check if health has reached 0
+        return bot.CurrentHealth <= 0;
     }
 
     [Task]
     void Die()
     {
-
+        // destroy enemy
+        Destroy(gameObject);
     }
 
     // stun
     [Task]
     bool IsStunned()
     {
-        return false;
+        return bot.Stunned;
     }
 
     [Task]
     void Stun()
     {
-
+        // do stunned stuff
+        // aka play animations
     }
 
     // trap triggered
     [Task]
     bool IsTrapTriggered()
     {
-        return false;
+        return bot.TrapTriggered;
     }
 
     [Task]
     bool IsAtTrapLocation()
     {
-        return false;
+        return bot.Agent.remainingDistance <= bot.Agent.stoppingDistance;
     }
 
     [Task]
     void MoveToTrap()
     {
-        
+        // set the bot speed to run
+        // set trap triggered boolean to false when target destination is reached
+        bot.Agent.speed = bot.RunSpeed;
+        if (bot.Agent.remainingDistance <= bot.Agent.stoppingDistance) bot.TrapTriggered = false;
     }
 
     // attack tree

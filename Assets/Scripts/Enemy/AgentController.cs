@@ -50,7 +50,8 @@ public class AgentController : MonoBehaviour, IDamagable
     public NavMeshAgent Agent { get; private set; }
 
     // public booleans
-    public bool Stunned { get; private set; }
+    [HideInInspector]
+    public bool Stunned, TrapTriggered;
 
     // private variables
     Coroutine coroutine;
@@ -63,6 +64,7 @@ public class AgentController : MonoBehaviour, IDamagable
 
         // set booleans
         Stunned = false;
+        TrapTriggered = false;
 
         // set health
         CurrentHealth = maxHealth;
@@ -106,6 +108,35 @@ public class AgentController : MonoBehaviour, IDamagable
     void AfterStun()
     {
         Stunned = false;
+    }
+
+    // trap mechanic
+    // handle trap being triggered
+    void TrapHasBeenTriggered(Trap trap)
+    {
+        // set trap triggered to true
+        TrapTriggered = true;
+        // set agent destination to trap destination
+        Agent.SetDestination(trap.transform.position);
+        // unsubscribe from event
+        trap.TrapTriggered -= TrapHasBeenTriggered;
+        // destroy trap
+        Destroy(trap.gameObject);
+    }
+
+    // place down a trap at current location
+    public void PlaceTrap()
+    {
+        if (trapPrefab == null || TrappablePositionManager.Instance == null) return;
+        // instantiate trap prefab
+        GameObject obj = Instantiate(
+                trapPrefab, 
+                new Vector3(transform.position.x, 0f, transform.position.z), 
+                Quaternion.identity, 
+                TrappablePositionManager.Instance.transform
+            );
+        // subscribe to event to listen for when trap is triggered
+        obj.GetComponent<Trap>().TrapTriggered += TrapHasBeenTriggered;
     }
 
     // gizmos
