@@ -88,19 +88,24 @@ public class EnemyController : MonoBehaviour, IDamagable
     }
 
     // coroutines
-    IEnumerator CountDuration(float duration, bool boolToSet)
+    IEnumerator CountDuration(float duration, System.Action callback = null)
     {
-        boolToSet = true;
         yield return new WaitForSeconds(duration);
-        boolToSet = false;
+        callback?.Invoke();
         coroutine = null;
     }
 
-    // public methods
+    // handle stun
     public void Stun()
     {
-        if (coroutine != null) StopCoroutine(coroutine);
-        coroutine = StartCoroutine(CountDuration(StunDuration, Stunned));
+        if (coroutine != null && !Stunned) StopCoroutine(coroutine);
+        Stunned = true;
+        coroutine = StartCoroutine(CountDuration(StunDuration, AfterStun));
+    }
+
+    void AfterStun()
+    {
+        Stunned = false;
     }
 
     // gizmos
