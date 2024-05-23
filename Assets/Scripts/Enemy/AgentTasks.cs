@@ -195,7 +195,7 @@ namespace Agent
         [Task]
         bool IsWithinAttackRange()
         {
-            return false;
+            return bot.PlayerNearby(bot.AttackRange, out Transform player);
         }
 
         [Task]
@@ -203,22 +203,35 @@ namespace Agent
         {
             // log action
             Debug.Log("Attack");
+            // attack player
+            if (bot.PlayerNearby(bot.AttackRange, out Transform player))
+            {
+                // damage player
+                player.GetComponent<IDamagable>()?.Damage(1f);
+            }
         }
 
         // flee
         [Task]
+        bool IsHiding()
+        {
+            return bot.Hiding;
+        }
+
+        [Task]
         bool HasNotFledFromPlayer()
         {
-            // if bot is hiding, consider have fled
-            if (bot.Hiding) return true;
+            // check if player is within flee range
+            if (bot.PlayerNearby(bot.FleeDistance, out Transform player))
+            {
+
+            }
             return false;
         }
 
         [Task]
         void Flee()
         {
-            // if bot is hiding, consider have fled
-            if (bot.Hiding) return;
             // log action
             Debug.Log("Flee");
         }
@@ -228,6 +241,11 @@ namespace Agent
         [Task]
         bool IsAtCorridor()
         {
+            // randomly has a chance to transition to lay trapp state, if in a corridor
+            if (TrappablePositionManager.Instance != null && 
+                TrappablePositionManager.Instance.IsInCorridor(bot.transform.position) &&
+                Random.Range(0f, 1f) < bot.LayTrapChance)
+                    return true;
             return false;
         }
 
@@ -236,6 +254,10 @@ namespace Agent
         {
             // log action
             Debug.Log("Lay Trap");
+             // do not let agent move when in this state
+            bot.Agent.speed = 0f;
+            // place down trap
+            bot.PlaceTrap();
         }
 
         // push tree
@@ -280,6 +302,10 @@ namespace Agent
         {
             // log action
             Debug.Log("Patrol");
+            // get a random point to walk to, ensure it is possible to get a position
+            if (!bot.RandomPoint(bot.transform.position, bot.PatrolRadius, out Vector3 point)) return;
+            // set target position to walk towards
+            bot.Agent.SetDestination(point);
         }
     }
 }

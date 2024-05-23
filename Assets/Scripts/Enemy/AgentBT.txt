@@ -41,9 +41,11 @@ tree("Attack")
                 sequence
                     IsWithinAttackRange
                     Attack
-        sequence
-            HasNotFledFromPlayer
-            Flee
+        fallback
+            IsHiding
+            sequence
+                HasNotFledFromPlayer
+                Flee
 
 tree("Lay Trap")
     sequence

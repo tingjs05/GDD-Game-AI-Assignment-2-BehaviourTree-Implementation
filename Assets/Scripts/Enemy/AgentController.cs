@@ -29,14 +29,12 @@ namespace Agent
         [field: SerializeField] public float PlayerInObstacleRange { get; private set; } = 3f;
 
         [field: Header("Durations")]
-        [field: SerializeField] public float AttackDuration { get; private set; } = 0.25f;
         [field: SerializeField] public float MaxFleeDuration { get; private set; } = 5f;
         [field: SerializeField] public float MinFaceEnemyDuration { get; private set; } = 0.5f;
         [field: SerializeField] public float MaxHideDuration { get; private set; } = 5f;
         [field: SerializeField] public float MaxWaitDuration { get; private set; } = 5f;
         [field: SerializeField] public float StunDuration { get; private set; } = 3f;
         [field: SerializeField] public float PushDuration { get; private set; } = 1.5f;
-        [field: SerializeField] public float LayTrapDuration { get; private set; } = 1f;
         [field: SerializeField] public Vector2 PushCheckCooldown { get; private set; } = new Vector2(3f, 5f);
         [field: SerializeField] public Vector2 PlaceTrapCooldown { get; private set; } = new Vector2(3f, 5f);
 
