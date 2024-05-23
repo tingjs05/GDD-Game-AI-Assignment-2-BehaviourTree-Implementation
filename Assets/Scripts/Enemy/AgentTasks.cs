@@ -30,6 +30,8 @@ public class AgentTasks : MonoBehaviour
     [Task]
     void Die()
     {
+        // log action
+        Debug.Log("Died");
         // destroy enemy
         Destroy(gameObject);
     }
@@ -44,6 +46,8 @@ public class AgentTasks : MonoBehaviour
     [Task]
     void Stun()
     {
+        // log action
+        Debug.Log("Stunned");
         // do stunned stuff
         // aka play animations
     }
@@ -64,6 +68,8 @@ public class AgentTasks : MonoBehaviour
     [Task]
     void MoveToTrap()
     {
+        // log action
+        Debug.Log("Move to Trap");
         // set the bot speed to run
         // set trap triggered boolean to false when target destination is reached
         bot.Agent.speed = bot.RunSpeed;
@@ -81,7 +87,8 @@ public class AgentTasks : MonoBehaviour
     [Task]
     void Alert()
     {
-        
+        // log action
+        Debug.Log("Alert");
     }
 
     // prowl
@@ -94,7 +101,8 @@ public class AgentTasks : MonoBehaviour
     [Task]
     void Prowl()
     {
-        
+        // log action
+        Debug.Log("Prowl");
     }
 
     // hide
@@ -113,13 +121,15 @@ public class AgentTasks : MonoBehaviour
     [Task]
     void MoveToHidingLocation()
     {
-        
+        // log action
+        Debug.Log("Move to Hiding Location");
     }
 
     [Task]
     void Hide()
     {
-        
+        // log action
+        Debug.Log("Hide");
     }
 
     // attack
@@ -132,7 +142,8 @@ public class AgentTasks : MonoBehaviour
     [Task]
     void Attack()
     {
-        
+        // log action
+        Debug.Log("Attack");
     }
 
     // flee
@@ -145,7 +156,8 @@ public class AgentTasks : MonoBehaviour
     [Task]
     void Flee()
     {
-        
+        // log action
+        Debug.Log("Flee");
     }
 
     // lay trap tree
@@ -159,7 +171,8 @@ public class AgentTasks : MonoBehaviour
     [Task]
     void LayTrap()
     {
-        
+        // log action
+        Debug.Log("Lay Trap");
     }
 
     // push tree
@@ -173,7 +186,8 @@ public class AgentTasks : MonoBehaviour
     [Task]
     void MoveToWaitLocation()
     {
-        
+        // log action
+        Debug.Log("Move to Wait Location");
     }
 
     // push
@@ -186,7 +200,8 @@ public class AgentTasks : MonoBehaviour
     [Task]
     void Push()
     {
-        
+        // log action
+        Debug.Log("Push");
     }
 
     // patrol tree
@@ -200,6 +215,7 @@ public class AgentTasks : MonoBehaviour
     [Task]
     void Patrol()
     {
-        
+        // log action
+        Debug.Log("Patrol");
     }
 }
