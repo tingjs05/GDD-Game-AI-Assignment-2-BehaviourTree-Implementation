@@ -42,7 +42,7 @@ tree("Attack")
                     IsWithinAttackRange
                     Attack
         sequence
-            HasFledFromPlayer
+            HasNotFledFromPlayer
             Flee
 
 tree("Lay Trap")

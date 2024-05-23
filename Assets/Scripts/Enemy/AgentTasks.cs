@@ -3,219 +3,283 @@ using System.Collections.Generic;
 using UnityEngine;
 using Panda;
 
-[RequireComponent(typeof(PandaBehaviour), typeof(AgentController))] 
-public class AgentTasks : MonoBehaviour
+namespace Agent
 {
-    // componenets
-    PandaBehaviour panda;
-    AgentController bot;
-
-    // Start is called before the first frame update
-    void Start()
+    [RequireComponent(typeof(PandaBehaviour), typeof(AgentController))] 
+    public class AgentTasks : MonoBehaviour
     {
-        // get componenets
-        panda = GetComponent<PandaBehaviour>();
-        bot = GetComponent<AgentController>();
-    }
+        // componenets
+        PandaBehaviour panda;
+        AgentController bot;
 
-    // priorities tree
-    // death
-    [Task]
-    bool IsDead()
-    {
-        // check if health has reached 0
-        return bot.CurrentHealth <= 0;
-    }
+        // Start is called before the first frame update
+        void Start()
+        {
+            // get componenets
+            panda = GetComponent<PandaBehaviour>();
+            bot = GetComponent<AgentController>();
+        }
 
-    [Task]
-    void Die()
-    {
-        // log action
-        Debug.Log("Died");
-        // destroy enemy
-        Destroy(gameObject);
-    }
+        // priorities tree
+        // death
+        [Task]
+        bool IsDead()
+        {
+            // check if health has reached 0
+            return bot.CurrentHealth <= 0;
+        }
 
-    // stun
-    [Task]
-    bool IsStunned()
-    {
-        return bot.Stunned;
-    }
+        [Task]
+        void Die()
+        {
+            // log action
+            Debug.Log("Died");
+            // destroy enemy
+            Destroy(gameObject);
+        }
 
-    [Task]
-    void Stun()
-    {
-        // log action
-        Debug.Log("Stunned");
-        // do stunned stuff
-        // aka play animations
-    }
+        // stun
+        [Task]
+        bool IsStunned()
+        {
+            return bot.Stunned;
+        }
 
-    // trap triggered
-    [Task]
-    bool IsTrapTriggered()
-    {
-        return bot.TrapTriggered;
-    }
+        [Task]
+        void Stun()
+        {
+            // log action
+            Debug.Log("Stunned");
+            // do stunned stuff
+            // aka play animations
+        }
 
-    [Task]
-    bool IsAtTrapLocation()
-    {
-        return bot.Agent.remainingDistance <= bot.Agent.stoppingDistance;
-    }
+        // trap triggered
+        [Task]
+        bool IsTrapTriggered()
+        {
+            return bot.TrapTriggered;
+        }
 
-    [Task]
-    void MoveToTrap()
-    {
-        // log action
-        Debug.Log("Move to Trap");
-        // set the bot speed to run
-        // set trap triggered boolean to false when target destination is reached
-        bot.Agent.speed = bot.RunSpeed;
-        if (bot.Agent.remainingDistance <= bot.Agent.stoppingDistance) bot.TrapTriggered = false;
-    }
+        [Task]
+        bool IsAtTrapLocation()
+        {
+            return bot.Agent.remainingDistance <= bot.Agent.stoppingDistance;
+        }
 
-    // attack tree
-    // alert
-    [Task]
-    bool IsAlerted()
-    {
-        return false;
-    }
+        [Task]
+        void MoveToTrap()
+        {
+            // log action
+            Debug.Log("Move to Trap");
+            // set the bot speed to run speed
+            // set trap triggered boolean to false when target destination is reached
+            bot.Agent.speed = bot.RunSpeed;
+            if (bot.Agent.remainingDistance <= bot.Agent.stoppingDistance) bot.TrapTriggered = false;
+        }
 
-    [Task]
-    void Alert()
-    {
-        // log action
-        Debug.Log("Alert");
-    }
+        // attack tree
+        // alert
+        [Task]
+        bool IsAlerted()
+        {
+            // check if player is within alert range
+            if (bot.PlayerNearby(bot.AlertRadius, out Transform player))
+            {
+                // set the bot speed to sneak speed
+                bot.Agent.speed = bot.SneakSpeed;
+                // set destination
+                bot.Agent.SetDestination(player.position);
+                // reset hiding if needed
+                if (bot.Hiding)
+                {
+                    bot.Hiding = false;
+                    bot.CanHide = true;
+                    if (bot.coroutine != null) 
+                    {
+                        bot.StopCoroutine(bot.coroutine);
+                        bot.coroutine = null;
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
 
-    // prowl
-    [Task]
-    bool IsPlayerSeen()
-    {
-        return false;
-    }
+        [Task]
+        void Alert()
+        {
+            // log action
+            Debug.Log("Alert");
+        }
 
-    [Task]
-    void Prowl()
-    {
-        // log action
-        Debug.Log("Prowl");
-    }
+        // prowl
+        [Task]
+        bool IsPlayerSeen()
+        {
+            // check if player is seen
+            if (bot.PlayerSeen(bot.AlertRadius, out Transform player))
+            {
+                // set the bot speed to run speed
+                bot.Agent.speed = bot.RunSpeed;
+                // set destination
+                bot.Agent.SetDestination(player.position);
+                return true;
+            }
+            return false;
+        }
 
-    // hide
-    [Task]
-    bool IsPlayerMovingTowardsSelf()
-    {
-        return false;
-    }
+        [Task]
+        void Prowl()
+        {
+            // log action
+            Debug.Log("Prowl");
+        }
 
-    [Task]
-    bool IsAtHidingLocation()
-    {
-        return false;
-    }
+        // hide
+        [Task]
+        bool IsPlayerMovingTowardsSelf()
+        {
+            // check if can hide, and player is moving towards self
+            if (bot.CanHide && bot.PlayerNearby(bot.AlertRadius, out Transform player))
+            {
+                return bot.PlayerIsMovingTowardsEnemy(player);
+            }
+            return false;
+        }
 
-    [Task]
-    void MoveToHidingLocation()
-    {
-        // log action
-        Debug.Log("Move to Hiding Location");
-    }
+        [Task]
+        bool IsAtHidingLocation()
+        {
+            if (!bot.Hiding)
+            {
+                if (bot.GetNearestHidingSpot(out Vector3 hidingSpot))
+                {
+                    // set destination if not at hiding position
+                    bot.Agent.SetDestination(hidingSpot);
+                }
+            }
+            else if (bot.Agent.remainingDistance <= bot.Agent.stoppingDistance)
+            {
+                // when at hiding position, start hiding
+                bot.Hiding = true;
+                return true;
+            }
 
-    [Task]
-    void Hide()
-    {
-        // log action
-        Debug.Log("Hide");
-    }
+            return false;
+        }
 
-    // attack
-    [Task]
-    bool IsWithinAttackRange()
-    {
-        return false;
-    }
+        [Task]
+        void MoveToHidingLocation()
+        {
+            // log action
+            Debug.Log("Move to Hiding Location");
+            // set the bot speed to run speed
+            bot.Agent.speed = bot.RunSpeed;
+        }
 
-    [Task]
-    void Attack()
-    {
-        // log action
-        Debug.Log("Attack");
-    }
+        [Task]
+        void Hide()
+        {
+            // log action
+            Debug.Log("Hide");
+            // handle hiding
+            if (bot.CanHide)
+            {
+                bot.CanHide = false;
+                bot.coroutine = StartCoroutine(bot.CountDuration(bot.MaxHideDuration, bot.AfterHide));
+            }
+        }
 
-    // flee
-    [Task]
-    bool HasFledFromPlayer()
-    {
-        return false;
-    }
+        // attack
+        [Task]
+        bool IsWithinAttackRange()
+        {
+            return false;
+        }
 
-    [Task]
-    void Flee()
-    {
-        // log action
-        Debug.Log("Flee");
-    }
+        [Task]
+        void Attack()
+        {
+            // log action
+            Debug.Log("Attack");
+        }
 
-    // lay trap tree
-    // lay trap
-    [Task]
-    bool IsAtCorridor()
-    {
-        return false;
-    }
+        // flee
+        [Task]
+        bool HasNotFledFromPlayer()
+        {
+            // if bot is hiding, consider have fled
+            if (bot.Hiding) return true;
+            return false;
+        }
 
-    [Task]
-    void LayTrap()
-    {
-        // log action
-        Debug.Log("Lay Trap");
-    }
+        [Task]
+        void Flee()
+        {
+            // if bot is hiding, consider have fled
+            if (bot.Hiding) return;
+            // log action
+            Debug.Log("Flee");
+        }
 
-    // push tree
-    // wait
-    [Task]
-    bool IsAtWaitLocation()
-    {
-        return false;
-    }
+        // lay trap tree
+        // lay trap
+        [Task]
+        bool IsAtCorridor()
+        {
+            return false;
+        }
 
-    [Task]
-    void MoveToWaitLocation()
-    {
-        // log action
-        Debug.Log("Move to Wait Location");
-    }
+        [Task]
+        void LayTrap()
+        {
+            // log action
+            Debug.Log("Lay Trap");
+        }
 
-    // push
-    [Task]
-    bool IsWithinPushRange()
-    {
-        return false;
-    }
+        // push tree
+        // wait
+        [Task]
+        bool IsAtWaitLocation()
+        {
+            return false;
+        }
 
-    [Task]
-    void Push()
-    {
-        // log action
-        Debug.Log("Push");
-    }
+        [Task]
+        void MoveToWaitLocation()
+        {
+            // log action
+            Debug.Log("Move to Wait Location");
+        }
 
-    // patrol tree
-    // patrol
-    [Task]
-    bool HasReachedTargetLocation()
-    {
-        return false;
-    }
+        // push
+        [Task]
+        bool IsWithinPushRange()
+        {
+            return false;
+        }
 
-    [Task]
-    void Patrol()
-    {
-        // log action
-        Debug.Log("Patrol");
+        [Task]
+        void Push()
+        {
+            // log action
+            Debug.Log("Push");
+        }
+
+        // patrol tree
+        // patrol
+        [Task]
+        bool HasReachedTargetLocation()
+        {
+            return bot.Agent.remainingDistance <= bot.Agent.stoppingDistance;
+        }
+
+        [Task]
+        void Patrol()
+        {
+            // log action
+            Debug.Log("Patrol");
+        }
     }
 }
