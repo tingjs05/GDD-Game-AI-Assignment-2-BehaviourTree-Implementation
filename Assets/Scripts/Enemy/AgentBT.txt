@@ -2,6 +2,7 @@ tree("Root")
     repeat
         fallback
             tree("Priorities")
+            tree("Push Check")
             tree("Attack")
             tree("Lay Trap")
             tree("Push")
@@ -19,6 +20,11 @@ tree("Priorities")
             IsTrapTriggered
             IsAtTrapLocation
             MoveToTrap
+
+tree("Push Check")
+    sequence
+        IsPushing
+        ContinuePushing
 
 
 tree("Attack")

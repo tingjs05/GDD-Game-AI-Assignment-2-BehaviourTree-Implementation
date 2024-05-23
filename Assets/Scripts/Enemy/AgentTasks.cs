@@ -78,6 +78,21 @@ namespace Agent
             if (bot.Agent.remainingDistance <= bot.Agent.stoppingDistance) bot.TrapTriggered = false;
         }
 
+        // push check tree
+        // check if currently pushing
+        [Task]
+        bool IsPushing()
+        {
+            return bot.Pushing;
+        }
+
+        [Task]
+        void ContinuePushing()
+        {
+            // log action
+            Debug.Log("Continuing Push");
+        }
+
         // attack tree
         // alert
         [Task]
@@ -157,6 +172,8 @@ namespace Agent
                 {
                     // set destination if not at hiding position
                     bot.Agent.SetDestination(hidingSpot);
+                    // set the bot speed to run speed
+                    bot.Agent.speed = bot.RunSpeed;
                 }
             }
             else if (bot.Agent.remainingDistance <= bot.Agent.stoppingDistance)
@@ -174,8 +191,6 @@ namespace Agent
         {
             // log action
             Debug.Log("Move to Hiding Location");
-            // set the bot speed to run speed
-            bot.Agent.speed = bot.RunSpeed;
         }
 
         [Task]
@@ -183,7 +198,7 @@ namespace Agent
         {
             // log action
             Debug.Log("Hide");
-            // handle hiding
+            // handle hiding, ensure can only hide for set amount of time
             if (bot.CanHide)
             {
                 bot.CanHide = false;
@@ -221,10 +236,24 @@ namespace Agent
         [Task]
         bool HasNotFledFromPlayer()
         {
-            // check if player is within flee range
-            if (bot.PlayerNearby(bot.FleeDistance, out Transform player))
+            // check if can flee and player is within flee range
+            if (bot.CanFlee && bot.PlayerNearby(bot.FleeDistance, out Transform player))
             {
+                // run away from player by setting destination as vector away from player
+                bot.Agent.SetDestination(transform.position +  
+                    ((transform.position - player.position).normalized * (1f + bot.Agent.stoppingDistance)));
+                
+                // set the bot speed to run speed
+                bot.Agent.speed = bot.RunSpeed;
 
+                return true;
+            }
+            // reset flee counter once sucessfully fled
+            bot.CanFlee = true;
+            if (bot.coroutine != null)
+            {
+                bot.StopCoroutine(bot.coroutine);
+                bot.coroutine = null;
             }
             return false;
         }
@@ -234,6 +263,12 @@ namespace Agent
         {
             // log action
             Debug.Log("Flee");
+            // handle fleeing, ensure can only flee for set amount of time
+            if (bot.CanFlee)
+            {
+                bot.CanFlee = false;
+                bot.coroutine = StartCoroutine(bot.CountDuration(bot.MaxFleeDuration, bot.AfterFlee));
+            }
         }
 
         // lay trap tree
@@ -241,9 +276,11 @@ namespace Agent
         [Task]
         bool IsAtCorridor()
         {
+            // check if can lay trap
+            if (!bot.CanLayTrap) return false;
             // randomly has a chance to transition to lay trapp state, if in a corridor
             if (TrappablePositionManager.Instance != null && 
-                TrappablePositionManager.Instance.IsInCorridor(bot.transform.position) &&
+                TrappablePositionManager.Instance.IsInCorridor(transform.position) &&
                 Random.Range(0f, 1f) < bot.LayTrapChance)
                     return true;
             return false;
@@ -254,10 +291,12 @@ namespace Agent
         {
             // log action
             Debug.Log("Lay Trap");
-             // do not let agent move when in this state
+            // do not let agent move when in this state
             bot.Agent.speed = 0f;
             // place down trap
             bot.PlaceTrap();
+            // set can lay trap to false
+            bot.CanLayTrap = false;
         }
 
         // push tree
@@ -265,6 +304,26 @@ namespace Agent
         [Task]
         bool IsAtWaitLocation()
         {
+            // check if can push
+            if (!bot.CanPush) return false;
+
+            if (!bot.Waiting && !bot.Pushing)
+            {
+                if (bot.GetNearestPushSpot(out Vector3 pushingSpot))
+                {
+                    // set destination if not at pushing position
+                    bot.Agent.SetDestination(pushingSpot);
+                    // set the bot speed to walk speed
+                    bot.Agent.speed = bot.WalkSpeed;
+                }
+            }
+            else if (bot.Agent.remainingDistance <= bot.Agent.stoppingDistance)
+            {
+                // when at hiding pushing, start pushing
+                bot.Waiting = true;
+                return true;
+            }
+
             return false;
         }
 
@@ -279,6 +338,12 @@ namespace Agent
         [Task]
         bool IsWithinPushRange()
         {
+            // handle waiting, ensure can only wait for set amount of time
+            if (bot.CanWait)
+            {
+                bot.CanWait = false;
+                bot.coroutine = StartCoroutine(bot.CountDuration(bot.MaxHideDuration, bot.AfterHide));
+            }
             return false;
         }
 
@@ -287,6 +352,27 @@ namespace Agent
         {
             // log action
             Debug.Log("Push");
+            // get reference to pushable object
+            Collider[] hit = Physics.OverlapSphere(transform.position, bot.Agent.stoppingDistance, LayerMask.GetMask("Obstacles"));
+            // try to get pushable object script
+            PushableObject pushableObject = null;
+            if (hit.Length > 0) pushableObject = hit[0].transform.parent.GetComponent<PushableObject>();
+            // switch back to patrol state if failed to get reference to obstacle or pushable object
+            // drop object, ensure drop was successful, if not return to patrol state as well
+            if (hit.Length <= 0 || pushableObject == null || !pushableObject.DropObject(out Vector3 pushSpot))
+            {
+                // couldnt push object
+                return;
+            }
+            // push object
+            // cont allow push
+            bot.CanPush = false;
+            // dont allow stun when pushing
+            bot.CanStun = false;
+            // enter pushing
+            bot.Pushing = true;
+            // count push duration
+            bot.coroutine = StartCoroutine(bot.CountDuration(bot.PushDuration, bot.AfterPush));
         }
 
         // patrol tree
@@ -303,9 +389,11 @@ namespace Agent
             // log action
             Debug.Log("Patrol");
             // get a random point to walk to, ensure it is possible to get a position
-            if (!bot.RandomPoint(bot.transform.position, bot.PatrolRadius, out Vector3 point)) return;
+            if (!bot.RandomPoint(transform.position, bot.PatrolRadius, out Vector3 point)) return;
             // set target position to walk towards
             bot.Agent.SetDestination(point);
+            // set the bot speed to walk speed
+            bot.Agent.speed = bot.WalkSpeed;
         }
     }
 }

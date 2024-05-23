@@ -52,9 +52,9 @@ namespace Agent
 
         // public booleans
         [HideInInspector]
-        public bool Stunned, TrapTriggered, Hiding; 
+        public bool Stunned, TrapTriggered, Hiding, Waiting, Pushing; 
         [HideInInspector]
-        public bool CanHide, CanWait, CanStun;
+        public bool CanHide, CanWait, CanStun, CanFlee, CanLayTrap, CanPush;
 
         // coroutine manager
         [HideInInspector] public Coroutine coroutine;
@@ -69,10 +69,15 @@ namespace Agent
             Stunned = false;
             TrapTriggered = false;
             Hiding = false;
+            Waiting = false;
+            Pushing = false;
 
             CanHide = true;
             CanWait = true;
             CanStun = true;
+            CanFlee = true;
+            CanLayTrap = true;
+            CanPush = true;
 
             // set health
             CurrentHealth = maxHealth;
@@ -98,11 +103,25 @@ namespace Agent
         }
 
         // coroutines
-        public IEnumerator CountDuration(float duration, System.Action callback = null)
+        public IEnumerator CountDuration(float duration, System.Action callback = null, bool resetCoroutine = true)
         {
             yield return new WaitForSeconds(duration);
             callback?.Invoke();
-            coroutine = null;
+            if (resetCoroutine) coroutine = null;
+        }
+
+        // handle resetting can lay trap and can push
+        // periodically reset to true to allow actions to be taken
+        void ResetCanLayTrap()
+        {
+            CanLayTrap = true;
+            StartCoroutine(CountDuration(Random.Range(PlaceTrapCooldown.x, PlaceTrapCooldown.y), ResetCanLayTrap, false));
+        }
+
+        void ResetCanPush()
+        {
+            CanPush = true;
+            StartCoroutine(CountDuration(Random.Range(PushCheckCooldown.x, PushCheckCooldown.y), ResetCanLayTrap, false));
         }
 
         // handle stun
@@ -168,10 +187,44 @@ namespace Agent
             return true;
         }
 
+        // get nearest pushing spot
+        public bool GetNearestPushSpot(out Vector3 pushingSpot)
+        {
+            // set pushing spot
+            pushingSpot = Vector3.zero;
+            // do not hide if there are no pushing spots
+            if (HidingPositionManager.Instance.PushingSpots.Count <= 0) return false;
+            // sort pushing spots by distance from self
+            pushingSpot = HidingPositionManager.Instance.PushingSpots
+                .OrderBy(x => Vector3.Distance(transform.position, x))
+                .ToArray()[0];
+            // return values
+            return true;
+        }
+
+        // callbacks
         public void AfterHide()
         {
-            CanHide = false;
+            CanHide = true;
             Hiding = false;
+        }
+
+        public void AfterWait()
+        {
+            CanWait = true;
+            Waiting = false;
+        }
+
+        public void AfterPush()
+        {
+            Pushing = false;
+            CanStun = true;
+        }
+
+        // flee mechanic
+        public void AfterFlee()
+        {
+            CanFlee = true;
         }
 
         // check for player
