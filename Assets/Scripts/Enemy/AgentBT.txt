@@ -1,11 +1,10 @@
 tree("Root")
-    repeat
-        fallback
-            tree("Priorities")
-            tree("Attack")
-            tree("Lay Trap")
-            tree("Push")
-            tree("Patrol")
+    fallback
+        tree("Priorities")
+        tree("Attack")
+        tree("Lay Trap")
+        tree("Push")
+        tree("Patrol")
 
 tree("Priorities")
     fallback
