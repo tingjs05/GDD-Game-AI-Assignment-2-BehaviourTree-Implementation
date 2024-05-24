@@ -286,12 +286,6 @@ namespace Agent
 
         // flee
         [Task]
-        bool HasFled()
-        {
-            return !bot.PlayerNearby(bot.FleeDistance, out Transform player);
-        }
-
-        [Task]
         void Flee()
         {
             // if task is mark as completed, task is successful
@@ -391,16 +385,19 @@ namespace Agent
         [Task]
         void FindNearestWaitLocation()
         {
-            // set destination to nearest push spot
-            if (bot.GetNearestPushSpot(out Vector3 pushingSpot))
+            // task fails if cannot find pushing spot
+            if (!bot.GetNearestPushSpot(out Vector3 pushingSpot)) 
             {
-                // set destination if not at pushing position
-                bot.Agent.SetDestination(pushingSpot);
-                // set the bot speed to walk speed
-                bot.Agent.speed = bot.WalkSpeed;
-                // set task to successful
-                ThisTask.Succeed();
+                ThisTask.Fail();
+                return;
             }
+
+            // set destination if not at pushing position
+            bot.Agent.SetDestination(pushingSpot);
+            // set the bot speed to walk speed
+            bot.Agent.speed = bot.WalkSpeed;
+            // set task to successful
+            ThisTask.Succeed();
         }
 
         [Task]
@@ -512,6 +509,8 @@ namespace Agent
         [Task]
         void Patrol()
         {
+            // set the bot speed to walk speed
+            bot.Agent.speed = bot.WalkSpeed;
             // set a new destination if reached target location
             if (bot.Agent.remainingDistance <= bot.Agent.stoppingDistance)
             {
@@ -519,8 +518,6 @@ namespace Agent
                 if (!bot.RandomPoint(transform.position, bot.PatrolRadius, out Vector3 point)) return;
                 // set target position to walk towards
                 bot.Agent.SetDestination(point);
-                // set the bot speed to walk speed
-                bot.Agent.speed = bot.WalkSpeed;
             }
             // complete task
             ThisTask.Succeed();
