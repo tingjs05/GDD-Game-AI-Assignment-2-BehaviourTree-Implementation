@@ -38,8 +38,6 @@ namespace Agent
         [Task]
         void Die()
         {
-            // log action
-            Debug.Log("Died");
             // destroy enemy
             Destroy(gameObject);
             // complete task
@@ -56,9 +54,6 @@ namespace Agent
         [Task]
         void Stun()
         {
-            // log action
-            Debug.Log("Stunned");
-
             // if task is mark as completed, task is successful
             if (taskCompleted) 
             {
@@ -96,8 +91,6 @@ namespace Agent
         [Task]
         void MoveToTrap()
         {
-            // log action
-            Debug.Log("Move to Trap");
             // set trap triggered boolean to false when target destination is reached
             if (bot.Agent.remainingDistance <= bot.Agent.stoppingDistance) 
             {
@@ -127,8 +120,6 @@ namespace Agent
         [Task]
         void Alert()
         {
-            // log action
-            Debug.Log("Alert");
             // move on to prowl if player is seen
             if (bot.PlayerSeen(bot.AlertRadius, out Transform player))
             {
@@ -147,9 +138,6 @@ namespace Agent
         [Task]
         void Prowl()
         {
-            // log action
-            Debug.Log("Prowl");
-
             // if task is mark as completed, task is successful
             if (taskCompleted) 
             {
@@ -212,9 +200,6 @@ namespace Agent
         [Task]
         void Attack()
         {
-            // log action
-            Debug.Log("Attack");
-
             // if task is mark as completed, task is successful
             if (taskCompleted) 
             {
@@ -244,8 +229,6 @@ namespace Agent
         [Task]
         void MoveToHidingLocation()
         {
-            // log action
-            Debug.Log("Move to Hiding Location");
             // when reached hiding location, task is successful
             if (bot.Agent.remainingDistance <= bot.Agent.stoppingDistance)
                 ThisTask.Succeed();
@@ -254,9 +237,6 @@ namespace Agent
         [Task]
         void Hide()
         {
-            // log action
-            Debug.Log("Hide");
-
             // if task is mark as completed, task is successful
             if (taskCompleted) 
             {
@@ -294,9 +274,6 @@ namespace Agent
         [Task]
         void Flee()
         {
-            // log action
-            Debug.Log("Flee");
-
             // if task is mark as completed, task is successful
             if (taskCompleted) 
             {
@@ -353,9 +330,6 @@ namespace Agent
         [Task]
         void LayTrap()
         {
-            // log action
-            Debug.Log("Lay Trap");
-
             // if task is mark as completed, task is successful
             if (taskCompleted) 
             {
@@ -405,8 +379,6 @@ namespace Agent
         [Task]
         void MoveToWaitLocation()
         {
-            // log action
-            Debug.Log("Move to Wait Location");
             // when reached waiting location, task is successful
             if (bot.Agent.remainingDistance <= bot.Agent.stoppingDistance)
                 ThisTask.Succeed();
@@ -416,9 +388,6 @@ namespace Agent
         [Task]
         void Wait()
         {
-            // log action
-            Debug.Log("Wait");
-
             // if task is mark as completed, task is successful
             if (taskCompleted) 
             {
@@ -465,9 +434,6 @@ namespace Agent
         [Task]
         void Push()
         {
-            // log action
-            Debug.Log("Push");
-
             // if task is mark as completed, task is successful
             if (taskCompleted) 
             {
@@ -513,8 +479,6 @@ namespace Agent
         [Task]
         void Patrol()
         {
-            // log action
-            Debug.Log("Patrol");
             // set a new destination if reached target location
             if (bot.Agent.remainingDistance <= bot.Agent.stoppingDistance)
             {

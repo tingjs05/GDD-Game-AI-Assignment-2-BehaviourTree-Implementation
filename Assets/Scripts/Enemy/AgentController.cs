@@ -80,6 +80,10 @@ namespace Agent
                 healthBar.value = maxHealth;
                 healthBar.gameObject.SetActive(false);
             }
+
+            // periodically reset can lay trap and can push
+            ResetCanLayTrap();
+            ResetCanPush();
         }
 
         // interface methods
