@@ -8,25 +8,20 @@ tree("Root")
 
 tree("Priorities")
     fallback
-        sequence
-            IsDead
+        while IsDead
             Die
-        sequence
-            IsStunned
+        while IsStunned
             Stun
-        sequence
-            IsTrapTriggered
+        while IsTrapTriggered
             MoveToTrap
 
 tree("Attack")
     sequence
-        sequence
-            IsAlerted
+        while IsAlerted
             Alert
         Prowl
         fallback
-            sequence
-                IsWithinAttackRange
+            while IsWithinAttackRange
                 Attack
             sequence
                 MoveToHidingLocation

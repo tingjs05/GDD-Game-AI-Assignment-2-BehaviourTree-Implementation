@@ -272,6 +272,12 @@ namespace Agent
 
         // flee
         [Task]
+        bool HasFled()
+        {
+            return !bot.PlayerNearby(bot.FleeDistance, out Transform player);
+        }
+
+        [Task]
         void Flee()
         {
             // if task is mark as completed, task is successful
