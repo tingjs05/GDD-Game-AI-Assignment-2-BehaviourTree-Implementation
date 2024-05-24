@@ -248,6 +248,7 @@ namespace Agent
         [Task]
         void Hide()
         {
+            Debug.Log("hiding");
             // if task is mark as completed, task is successful
             if (taskCompleted) 
             {
@@ -391,7 +392,6 @@ namespace Agent
                 ThisTask.Fail();
                 return;
             }
-
             // set destination if not at pushing position
             bot.Agent.SetDestination(pushingSpot);
             // set the bot speed to walk speed
@@ -403,8 +403,11 @@ namespace Agent
         [Task]
         void MoveToWaitLocation()
         {
+            // if can see player, fail task and choose another behaviour
+            if (bot.PlayerSeen(bot.AlertRadius, out Transform player))
+                ThisTask.Fail();
             // when reached waiting location, task is successful
-            if (bot.Agent.remainingDistance <= bot.Agent.stoppingDistance)
+            else if (bot.Agent.remainingDistance <= bot.Agent.stoppingDistance)
                 ThisTask.Succeed();
         }
 

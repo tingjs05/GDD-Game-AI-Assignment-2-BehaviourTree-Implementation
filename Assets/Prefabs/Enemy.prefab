@@ -216,12 +216,12 @@ MonoBehaviour:
   <SneakSpeed>k__BackingField: 0.5
   <PatrolRadius>k__BackingField: 8
   <AlertRadius>k__BackingField: 3
-  <AttackRange>k__BackingField: 1.5
+  <AttackRange>k__BackingField: 2
   <FleeDistance>k__BackingField: 5
   <PlayerInObstacleRange>k__BackingField: 1
   <AttackDuration>k__BackingField: 0.25
   <MaxFleeDuration>k__BackingField: 5
-  <MinFaceEnemyDuration>k__BackingField: 0.5
+  <MinFaceEnemyDuration>k__BackingField: 0.1
   <MaxHideDuration>k__BackingField: 5
   <MaxWaitDuration>k__BackingField: 5
   <StunDuration>k__BackingField: 3
@@ -229,7 +229,7 @@ MonoBehaviour:
   <LayTrapDuration>k__BackingField: 1
   <PushCheckCooldown>k__BackingField: {x: 8, y: 10}
   <PlaceTrapCooldown>k__BackingField: {x: 8, y: 10}
-  facingEnemyThreshold: 0.7
+  facingEnemyThreshold: 0.5
   <MinHideDistanceThreshold>k__BackingField: 3
   <PushTransitionChance>k__BackingField: 0.3
   <LayTrapChance>k__BackingField: 0.3
