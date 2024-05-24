@@ -46,6 +46,9 @@ namespace Agent
         [field: SerializeField, Range(0f, 1f)] public float PushTransitionChance { get; private set; } = 0.3f;
         [field: SerializeField, Range(0f, 1f)] public float LayTrapChance { get; private set; } = 0.3f;
 
+        [Header("UI Display")]
+        [SerializeField] Text behaviourIndicatorText;
+
         [Header("Prefabs")]
         [SerializeField] public GameObject trapPrefab;
 
@@ -281,6 +284,22 @@ namespace Agent
             }
             result = Vector3.zero;
             return false;
+        }
+
+        // method to set behaviour indicator text
+        public void SetText(string text)
+        {
+            // ensure that UI element is not null, 
+            // there is actually text provided in the parameter, 
+            // and the text provided is not equals to the current text
+            if (behaviourIndicatorText == null || 
+                text.Length <= 0 || 
+                text == behaviourIndicatorText.text) 
+                    return;
+            // set the text in the UI
+            behaviourIndicatorText.text = text;
+            // log text
+            Debug.Log(text);
         }
 
         // gizmos

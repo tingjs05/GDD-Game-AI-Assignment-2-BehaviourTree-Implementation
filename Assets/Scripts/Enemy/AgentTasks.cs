@@ -38,6 +38,8 @@ namespace Agent
         [Task]
         void Die()
         {
+            // set text
+            bot.SetText("Dead");
             // destroy enemy
             Destroy(gameObject);
             // complete task
@@ -54,6 +56,9 @@ namespace Agent
         [Task]
         void Stun()
         {
+            // set text
+            bot.SetText("Stunned");
+
             // if task is mark as completed, task is successful
             if (taskCompleted) 
             {
@@ -94,6 +99,9 @@ namespace Agent
         [Task]
         void MoveToTrap()
         {
+            // set text
+            bot.SetText("Move to Trap");
+
             // set trap triggered boolean to false when target destination is reached
             if (bot.Agent.remainingDistance <= bot.Agent.stoppingDistance) 
             {
@@ -123,6 +131,9 @@ namespace Agent
         [Task]
         void Alert()
         {
+            // set text
+            bot.SetText("Alert");
+
             // move on to prowl if player is seen
             if (bot.PlayerSeen(bot.AlertRadius, out Transform player))
             {
@@ -141,6 +152,9 @@ namespace Agent
         [Task]
         void Prowl()
         {
+            // set text
+            bot.SetText("Prowl");
+
             // if task is mark as completed, task is successful
             if (taskCompleted) 
             {
@@ -208,6 +222,9 @@ namespace Agent
         [Task]
         void Attack()
         {
+            // set text
+            bot.SetText("Attack");
+
             // if task is mark as completed, task is successful
             if (taskCompleted) 
             {
@@ -240,6 +257,8 @@ namespace Agent
         [Task]
         void MoveToHidingLocation()
         {
+            // set text
+            bot.SetText("Move to Hiding Location");
             // when reached hiding location, task is successful
             if (bot.Agent.remainingDistance <= bot.Agent.stoppingDistance)
                 ThisTask.Succeed();
@@ -248,7 +267,9 @@ namespace Agent
         [Task]
         void Hide()
         {
-            Debug.Log("hiding");
+            // set text
+            bot.SetText("Hide");
+
             // if task is mark as completed, task is successful
             if (taskCompleted) 
             {
@@ -289,6 +310,9 @@ namespace Agent
         [Task]
         void Flee()
         {
+            // set text
+            bot.SetText("Flee");
+
             // if task is mark as completed, task is successful
             if (taskCompleted) 
             {
@@ -347,6 +371,9 @@ namespace Agent
         [Task]
         void LayTrap()
         {
+            // set text
+            bot.SetText("Lay Trap");
+
             // if task is mark as completed, task is successful
             if (taskCompleted) 
             {
@@ -386,6 +413,9 @@ namespace Agent
         [Task]
         void FindNearestWaitLocation()
         {
+            // set text
+            bot.SetText("Find Nearest Wait Location");
+
             // task fails if cannot find pushing spot
             if (!bot.GetNearestPushSpot(out Vector3 pushingSpot)) 
             {
@@ -403,6 +433,9 @@ namespace Agent
         [Task]
         void MoveToWaitLocation()
         {
+            // set text
+            bot.SetText("Move to Wait Location");
+
             // if can see player, fail task and choose another behaviour
             if (bot.PlayerSeen(bot.AlertRadius, out Transform player))
                 ThisTask.Fail();
@@ -415,6 +448,9 @@ namespace Agent
         [Task]
         void Wait()
         {
+            // set text
+            bot.SetText("Wait");
+
             // if task is mark as completed, task is successful
             if (taskCompleted) 
             {
@@ -464,6 +500,9 @@ namespace Agent
         [Task]
         void Push()
         {
+            // set text
+            bot.SetText("Push");
+
             // if task is mark as completed, task is successful
             if (taskCompleted) 
             {
@@ -512,6 +551,8 @@ namespace Agent
         [Task]
         void Patrol()
         {
+            // set text
+            bot.SetText("Patrol");
             // set the bot speed to walk speed
             bot.Agent.speed = bot.WalkSpeed;
             // set a new destination if reached target location
