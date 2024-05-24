@@ -68,11 +68,14 @@ namespace Agent
             // reset task completed boolean
             taskCompleted = false;
 
-            // wait for stun duration
-            if (bot.coroutine != null && !bot.Stunned) bot.StopCoroutine(bot.coroutine);
+            // dont run if coroutine counter is running
+            if (bot.coroutine != null) return;
+            // dont allow double stun
+            bot.CanStun = false;
             // wait for stun duration, after that, set stun to false and complete task
             bot.coroutine = bot.StartCoroutine(bot.CountDuration(bot.StunDuration, () => {
                     bot.Stunned = false;
+                    bot.CanStun = true;
                     taskCompleted = true;
                 }));
         }
@@ -221,6 +224,8 @@ namespace Agent
             // reset task completed boolean
             taskCompleted = false;
 
+            // dont run if coroutine counter is running
+            if (bot.coroutine != null) return;
             // attack player
             if (bot.PlayerNearby(bot.AttackRange, out Transform player))
             {
@@ -228,7 +233,7 @@ namespace Agent
                 player.GetComponent<IDamagable>()?.Damage(1f);
             }
             // stay in attack for attack duration
-            bot.StartCoroutine(bot.CountDuration(bot.AttackDuration, () => {
+            bot.coroutine = bot.StartCoroutine(bot.CountDuration(bot.AttackDuration, () => {
                     // set the bot speed to run speed to prepare to flee after attack
                     bot.Agent.speed = bot.RunSpeed;
                     taskCompleted = true;
@@ -318,12 +323,8 @@ namespace Agent
                 return;
             }
             // handle successfully fleeing from player
-            // stop coroutine counter if its not null
-            if (bot.coroutine != null)
-            {
-                bot.StopCoroutine(bot.coroutine);
-                bot.coroutine = null;
-            }
+            // stop coroutine counter
+            bot.ResetCoroutine();
             // once successfully fled, task is successful
             ThisTask.Succeed();
         }
@@ -364,6 +365,8 @@ namespace Agent
             // reset task completed boolean
             taskCompleted = false;
 
+            // dont run if coroutine counter is running
+            if (bot.coroutine != null) return;
             // do not let agent move when in this state
             bot.Agent.speed = 0f;
             // place down trap
@@ -371,7 +374,7 @@ namespace Agent
             // set can lay trap to false
             bot.CanLayTrap = false;
             // stay in lay trap for lay trap duration
-            bot.StartCoroutine(bot.CountDuration(bot.LayTrapDuration, () => {
+            bot.coroutine = bot.StartCoroutine(bot.CountDuration(bot.LayTrapDuration, () => {
                     taskCompleted = true;
                 }));
         }
@@ -429,7 +432,7 @@ namespace Agent
             if (bot.coroutine == null)
             {
                 // after max wait duration, give up
-                bot.StartCoroutine(bot.CountDuration(bot.MaxWaitDuration, () => {
+                bot.coroutine = bot.StartCoroutine(bot.CountDuration(bot.MaxWaitDuration, () => {
                         // set can push to false, take it as a push attempt
                         bot.CanPush = false;
                         taskCompleted = true;
@@ -473,7 +476,9 @@ namespace Agent
             }
             // reset task completed boolean
             taskCompleted = false;
-            
+
+            // dont run if coroutine counter is running
+            if (bot.coroutine != null) return;
             // dont allow stun when pushing
             bot.CanStun = false;
             // get reference to pushable object
