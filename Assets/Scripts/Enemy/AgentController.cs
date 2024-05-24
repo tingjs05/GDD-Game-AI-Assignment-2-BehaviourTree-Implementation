@@ -89,6 +89,8 @@ namespace Agent
         // interface methods
         public void Damage(float damage)
         {
+            // dont take damage if cant get stunned
+            if (!CanStun) return;
             // change health
             CurrentHealth -= damage;
             // update health bar

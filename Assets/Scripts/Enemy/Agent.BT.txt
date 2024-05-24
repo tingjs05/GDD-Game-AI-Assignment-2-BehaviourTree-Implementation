@@ -2,8 +2,8 @@ tree("Root")
     fallback
         tree("Priorities")
         tree("Attack")
-        // tree("Lay Trap")
-        // tree("Push")
+        tree("Lay Trap")
+        tree("Push")
         tree("Patrol")
 
 tree("Priorities")
