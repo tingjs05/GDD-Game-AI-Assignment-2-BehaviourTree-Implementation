@@ -293,9 +293,9 @@ namespace Agent
             if (bot.coroutine != null)
             {
                 bot.coroutine = bot.StartCoroutine(bot.CountDuration(bot.MaxFleeDuration, () => {
-                    // successfully fled after max flee duration
-                    taskCompleted = true;
-                }));
+                        // successfully fled after max flee duration
+                        taskCompleted = true;
+                    }));
             }
             // flee from player if player still within flee distance
             if (bot.PlayerNearby(bot.FleeDistance, out Transform player))
