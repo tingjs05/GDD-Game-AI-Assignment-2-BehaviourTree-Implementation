@@ -87,13 +87,7 @@ namespace Agent
         [Task]
         bool IsTrapTriggered()
         {
-            if (bot.TrapTriggered)
-            {
-                // set the bot speed to run speed to run towards trap
-                bot.Agent.speed = bot.RunSpeed;
-                return true;
-            }
-            return false;
+            return bot.TrapTriggered;
         }
 
         [Task]
@@ -101,7 +95,8 @@ namespace Agent
         {
             // set text
             bot.SetText("Move to Trap");
-
+            // set the bot speed to run speed
+            bot.Agent.speed = bot.RunSpeed;
             // set trap triggered boolean to false when target destination is reached
             if (bot.Agent.remainingDistance <= bot.Agent.stoppingDistance) 
             {
@@ -119,8 +114,6 @@ namespace Agent
             // check if player is within alert range
             if (bot.PlayerNearby(bot.AlertRadius, out Transform player))
             {
-                // set the bot speed to sneak speed to prepare for alert
-                bot.Agent.speed = bot.SneakSpeed;
                 // set destination
                 bot.Agent.SetDestination(player.position);
                 return true;
@@ -133,12 +126,11 @@ namespace Agent
         {
             // set text
             bot.SetText("Alert");
-
+            // set the bot speed to sneak speed
+            bot.Agent.speed = bot.SneakSpeed;
             // move on to prowl if player is seen
             if (bot.PlayerSeen(bot.AlertRadius, out Transform player))
             {
-                // set the bot speed to run speed to prepare for prowl
-                bot.Agent.speed = bot.RunSpeed;
                 ThisTask.Succeed();
             }
             // fail sequence if player is not within alert range
@@ -154,7 +146,8 @@ namespace Agent
         {
             // set text
             bot.SetText("Prowl");
-
+            // set the bot speed to run speed
+            bot.Agent.speed = bot.RunSpeed;
             // if task is mark as completed, task is successful
             if (taskCompleted) 
             {
@@ -187,11 +180,8 @@ namespace Agent
             }
             
             // if player is not walking to self anymore, reset coroutine
-            if (!bot.PlayerIsMovingTowardsEnemy(player))
-            {
-                // reset coroutine, if player is no longer moving towards self
-                bot.ResetCoroutine();
-            }
+            // reset coroutine, if player is no longer moving towards self
+            if (!bot.PlayerIsMovingTowardsEnemy(player)) bot.ResetCoroutine();
 
             // handle player still being seen
             // complete task (stop prowling) if player is moving towards self for set time
@@ -200,13 +190,8 @@ namespace Agent
             // start new coroutine if there are no coroutines
             bot.coroutine = bot.StartCoroutine(bot.CountDuration(bot.MinFaceEnemyDuration, () => {
                     // go into hiding
-                    if (bot.GetNearestHidingSpot(out Vector3 hidingSpot))
-                    {
-                        // set destination if not at hiding position
-                        bot.Agent.SetDestination(hidingSpot);
-                        // set the bot speed to run speed to run to hiding spot
-                        bot.Agent.speed = bot.RunSpeed;
-                    }
+                    // set destination if not at hiding position
+                    if (bot.GetNearestHidingSpot(out Vector3 hidingSpot)) bot.Agent.SetDestination(hidingSpot);
                     // task is successful (exit task)
                     taskCompleted = true;
                 }));
@@ -247,8 +232,6 @@ namespace Agent
             }
             // stay in attack for attack duration
             bot.coroutine = bot.StartCoroutine(bot.CountDuration(bot.AttackDuration, () => {
-                    // set the bot speed to run speed to prepare to flee after attack
-                    bot.Agent.speed = bot.RunSpeed;
                     taskCompleted = true;
                 }));
         }
@@ -259,6 +242,8 @@ namespace Agent
         {
             // set text
             bot.SetText("Move to Hiding Location");
+            // set the bot speed to run speed
+            bot.Agent.speed = bot.RunSpeed;
             // when reached hiding location, task is successful
             if (bot.Agent.remainingDistance <= bot.Agent.stoppingDistance)
                 ThisTask.Succeed();
@@ -299,8 +284,6 @@ namespace Agent
             // handle hiding, ensure can only hide for set amount of time
             bot.coroutine = bot.StartCoroutine(bot.CountDuration(bot.MaxHideDuration, () => {
                     // after hiding for max hide duration, flee
-                    // set the bot speed to run speed to prepare to flee
-                    bot.Agent.speed = bot.RunSpeed;
                     // so mark task as successful
                     taskCompleted = true;
                 }));
@@ -312,6 +295,8 @@ namespace Agent
         {
             // set text
             bot.SetText("Flee");
+            // set the bot speed to run speed
+            bot.Agent.speed = bot.RunSpeed;
 
             // if task is mark as completed, task is successful
             if (taskCompleted) 
@@ -424,8 +409,6 @@ namespace Agent
             }
             // set destination if not at pushing position
             bot.Agent.SetDestination(pushingSpot);
-            // set the bot speed to walk speed
-            bot.Agent.speed = bot.WalkSpeed;
             // set task to successful
             ThisTask.Succeed();
         }
@@ -435,6 +418,8 @@ namespace Agent
         {
             // set text
             bot.SetText("Move to Wait Location");
+            // set the bot speed to walk speed
+            bot.Agent.speed = bot.WalkSpeed;
 
             // if can see player, fail task and choose another behaviour
             if (bot.PlayerSeen(bot.AlertRadius, out Transform player))
