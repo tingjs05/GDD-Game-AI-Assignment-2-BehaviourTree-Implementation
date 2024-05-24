@@ -82,8 +82,8 @@ namespace Agent
             }
 
             // periodically reset can lay trap and can push
-            ResetCanLayTrap();
-            ResetCanPush();
+            StartCoroutine(CountDuration(Random.Range(PlaceTrapCooldown.x, PlaceTrapCooldown.y), ResetCanLayTrap, false));
+            StartCoroutine(CountDuration(Random.Range(PushCheckCooldown.x, PushCheckCooldown.y), ResetCanPush, false));
         }
 
         // interface methods
