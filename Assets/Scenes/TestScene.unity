@@ -2397,14 +2397,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 681081645717745403, guid: 05735df5653361f4ba1b937092a3b013, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 681081645717745403, guid: 05735df5653361f4ba1b937092a3b013, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2217474453808568221, guid: 05735df5653361f4ba1b937092a3b013, type: 3}
       propertyPath: m_LocalPosition.x
       value: 6.5
@@ -2448,14 +2440,6 @@ PrefabInstance:
     - target: {fileID: 2389737504405581130, guid: 05735df5653361f4ba1b937092a3b013, type: 3}
       propertyPath: m_Name
       value: Enemy
-      objectReference: {fileID: 0}
-    - target: {fileID: 6492589604233003576, guid: 05735df5653361f4ba1b937092a3b013, type: 3}
-      propertyPath: tickOn
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 6492589604233003576, guid: 05735df5653361f4ba1b937092a3b013, type: 3}
-      propertyPath: autoReset
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
