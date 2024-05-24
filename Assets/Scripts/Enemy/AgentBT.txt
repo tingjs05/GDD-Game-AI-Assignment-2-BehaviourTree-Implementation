@@ -2,7 +2,6 @@ tree("Root")
     repeat
         fallback
             tree("Priorities")
-            tree("Push Check")
             tree("Attack")
             tree("Lay Trap")
             tree("Push")
@@ -18,56 +17,36 @@ tree("Priorities")
             Stun
         sequence
             IsTrapTriggered
-            IsAtTrapLocation
             MoveToTrap
-
-tree("Push Check")
-    sequence
-        IsPushing
-        ContinuePushing
-
 
 tree("Attack")
     sequence
         sequence
             IsAlerted
             Alert
-        sequence
-            sequence
-                IsPlayerSeen
-                Prowl
-            fallback
-                sequence
-                    IsPlayerMovingTowardsSelf
-                    sequence
-                        sequence
-                            IsAtHidingLocation
-                            MoveToHidingLocation
-                        Hide
-                sequence
-                    IsWithinAttackRange
-                    Attack
+        Prowl
         fallback
-            IsHiding
             sequence
-                HasNotFledFromPlayer
-                Flee
+                IsWithinAttackRange
+                Attack
+            sequence
+                MoveToHidingLocation
+                Hide
+        Flee
 
 tree("Lay Trap")
     sequence
+        CanLayTrap
         IsAtCorridor
         LayTrap
 
 tree("Push")
     sequence
-        sequence
-            IsAtWaitLocation
-            MoveToWaitLocation
-        sequence
-            IsWithinPushRange
-            Push
+        CanPush
+        FindNearestWaitLocation
+        MoveToWaitLocation
+        Wait
+        Push
 
 tree("Patrol")
-    sequence
-        HasReachedTargetLocation
-        Patrol
+    Patrol

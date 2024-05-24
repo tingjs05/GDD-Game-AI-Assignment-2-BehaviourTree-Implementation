@@ -29,12 +29,14 @@ namespace Agent
         [field: SerializeField] public float PlayerInObstacleRange { get; private set; } = 3f;
 
         [field: Header("Durations")]
+        [field: SerializeField] public float AttackDuration { get; private set; } = 0.25f;
         [field: SerializeField] public float MaxFleeDuration { get; private set; } = 5f;
         [field: SerializeField] public float MinFaceEnemyDuration { get; private set; } = 0.5f;
         [field: SerializeField] public float MaxHideDuration { get; private set; } = 5f;
         [field: SerializeField] public float MaxWaitDuration { get; private set; } = 5f;
         [field: SerializeField] public float StunDuration { get; private set; } = 3f;
         [field: SerializeField] public float PushDuration { get; private set; } = 1.5f;
+        [field: SerializeField] public float LayTrapDuration { get; private set; } = 1f;
         [field: SerializeField] public Vector2 PushCheckCooldown { get; private set; } = new Vector2(3f, 5f);
         [field: SerializeField] public Vector2 PlaceTrapCooldown { get; private set; } = new Vector2(3f, 5f);
 
@@ -52,9 +54,9 @@ namespace Agent
 
         // public booleans
         [HideInInspector]
-        public bool Stunned, TrapTriggered, Hiding, Waiting, Pushing; 
+        public bool Stunned, TrapTriggered; 
         [HideInInspector]
-        public bool CanHide, CanWait, CanStun, CanFlee, CanLayTrap, CanPush;
+        public bool CanStun, CanLayTrap, CanPush;
 
         // coroutine manager
         [HideInInspector] public Coroutine coroutine;
@@ -68,14 +70,8 @@ namespace Agent
             // set booleans
             Stunned = false;
             TrapTriggered = false;
-            Hiding = false;
-            Waiting = false;
-            Pushing = false;
 
-            CanHide = true;
-            CanWait = true;
             CanStun = true;
-            CanFlee = true;
             CanLayTrap = true;
             CanPush = true;
 
@@ -110,6 +106,14 @@ namespace Agent
             if (resetCoroutine) coroutine = null;
         }
 
+        // method to reset coroutines
+        public void ResetCoroutine()
+        {
+            if (coroutine == null) return;
+            StopCoroutine(coroutine);
+            coroutine = null;
+        }
+
         // handle resetting can lay trap and can push
         // periodically reset to true to allow actions to be taken
         void ResetCanLayTrap()
@@ -121,21 +125,14 @@ namespace Agent
         void ResetCanPush()
         {
             CanPush = true;
-            StartCoroutine(CountDuration(Random.Range(PushCheckCooldown.x, PushCheckCooldown.y), ResetCanLayTrap, false));
+            StartCoroutine(CountDuration(Random.Range(PushCheckCooldown.x, PushCheckCooldown.y), ResetCanPush, false));
         }
 
         // handle stun
         public void Stun()
         {
             if (!CanStun) return;
-            if (coroutine != null && !Stunned) StopCoroutine(coroutine);
             Stunned = true;
-            coroutine = StartCoroutine(CountDuration(StunDuration, AfterStun));
-        }
-
-        void AfterStun()
-        {
-            Stunned = false;
         }
 
         // trap mechanic
@@ -200,31 +197,6 @@ namespace Agent
                 .ToArray()[0];
             // return values
             return true;
-        }
-
-        // callbacks
-        public void AfterHide()
-        {
-            CanHide = true;
-            Hiding = false;
-        }
-
-        public void AfterWait()
-        {
-            CanWait = true;
-            Waiting = false;
-        }
-
-        public void AfterPush()
-        {
-            Pushing = false;
-            CanStun = true;
-        }
-
-        // flee mechanic
-        public void AfterFlee()
-        {
-            CanFlee = true;
         }
 
         // check for player

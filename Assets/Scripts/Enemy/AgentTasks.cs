@@ -36,6 +36,8 @@ namespace Agent
             Debug.Log("Died");
             // destroy enemy
             Destroy(gameObject);
+            // complete task
+            ThisTask.Succeed();
         }
 
         // stun
@@ -50,21 +52,26 @@ namespace Agent
         {
             // log action
             Debug.Log("Stunned");
-            // do stunned stuff
-            // aka play animations
+            // wait for stun duration
+            if (bot.coroutine != null && !bot.Stunned) bot.StopCoroutine(bot.coroutine);
+            // wait for stun duration, after that, set stun to false and complete task
+            bot.coroutine = bot.StartCoroutine(bot.CountDuration(bot.StunDuration, () => {
+                    bot.Stunned = false;
+                    ThisTask.Succeed();
+                }));
         }
 
         // trap triggered
         [Task]
         bool IsTrapTriggered()
         {
-            return bot.TrapTriggered;
-        }
-
-        [Task]
-        bool IsAtTrapLocation()
-        {
-            return bot.Agent.remainingDistance <= bot.Agent.stoppingDistance;
+            if (bot.TrapTriggered)
+            {
+                // set the bot speed to run speed to run towards trap
+                bot.Agent.speed = bot.RunSpeed;
+                return true;
+            }
+            return false;
         }
 
         [Task]
@@ -72,25 +79,8 @@ namespace Agent
         {
             // log action
             Debug.Log("Move to Trap");
-            // set the bot speed to run speed
             // set trap triggered boolean to false when target destination is reached
-            bot.Agent.speed = bot.RunSpeed;
             if (bot.Agent.remainingDistance <= bot.Agent.stoppingDistance) bot.TrapTriggered = false;
-        }
-
-        // push check tree
-        // check if currently pushing
-        [Task]
-        bool IsPushing()
-        {
-            return bot.Pushing;
-        }
-
-        [Task]
-        void ContinuePushing()
-        {
-            // log action
-            Debug.Log("Continuing Push");
         }
 
         // attack tree
@@ -101,21 +91,10 @@ namespace Agent
             // check if player is within alert range
             if (bot.PlayerNearby(bot.AlertRadius, out Transform player))
             {
-                // set the bot speed to sneak speed
+                // set the bot speed to sneak speed to prepare for alert
                 bot.Agent.speed = bot.SneakSpeed;
                 // set destination
                 bot.Agent.SetDestination(player.position);
-                // reset hiding if needed
-                if (bot.Hiding)
-                {
-                    bot.Hiding = false;
-                    bot.CanHide = true;
-                    if (bot.coroutine != null) 
-                    {
-                        bot.StopCoroutine(bot.coroutine);
-                        bot.coroutine = null;
-                    }
-                }
                 return true;
             }
             return false;
@@ -126,84 +105,68 @@ namespace Agent
         {
             // log action
             Debug.Log("Alert");
+            // move on to prowl if player is seen
+            if (bot.PlayerSeen(bot.AlertRadius, out Transform player))
+            {
+                // set the bot speed to run speed to prepare for prowl
+                bot.Agent.speed = bot.RunSpeed;
+                ThisTask.Succeed();
+            }
+            // fail sequence if player is not within alert range
+            else if (Vector3.Distance(transform.position, player.position) > bot.AlertRadius)
+            {
+                ThisTask.Fail();
+            }
         }
 
         // prowl
-        [Task]
-        bool IsPlayerSeen()
-        {
-            // check if player is seen
-            if (bot.PlayerSeen(bot.AlertRadius, out Transform player))
-            {
-                // set the bot speed to run speed
-                bot.Agent.speed = bot.RunSpeed;
-                // set destination
-                bot.Agent.SetDestination(player.position);
-                return true;
-            }
-            return false;
-        }
-
         [Task]
         void Prowl()
         {
             // log action
             Debug.Log("Prowl");
-        }
 
-        // hide
-        [Task]
-        bool IsPlayerMovingTowardsSelf()
-        {
-            // check if can hide, and player is moving towards self
-            if (bot.CanHide && bot.PlayerNearby(bot.AlertRadius, out Transform player))
+            // check if player is still seen
+            if (!bot.PlayerSeen(bot.AlertRadius, out Transform player)) 
             {
-                return bot.PlayerIsMovingTowardsEnemy(player);
-            }
-            return false;
-        }
-
-        [Task]
-        bool IsAtHidingLocation()
-        {
-            if (!bot.Hiding)
-            {
-                if (bot.GetNearestHidingSpot(out Vector3 hidingSpot))
-                {
-                    // set destination if not at hiding position
-                    bot.Agent.SetDestination(hidingSpot);
-                    // set the bot speed to run speed
-                    bot.Agent.speed = bot.RunSpeed;
-                }
-            }
-            else if (bot.Agent.remainingDistance <= bot.Agent.stoppingDistance)
-            {
-                // when at hiding position, start hiding
-                bot.Hiding = true;
-                return true;
+                // if player is no longer seen, task failed
+                ThisTask.Fail();
+                return;
             }
 
-            return false;
-        }
-
-        [Task]
-        void MoveToHidingLocation()
-        {
-            // log action
-            Debug.Log("Move to Hiding Location");
-        }
-
-        [Task]
-        void Hide()
-        {
-            // log action
-            Debug.Log("Hide");
-            // handle hiding, ensure can only hide for set amount of time
-            if (bot.CanHide)
+            // if player is within attack range, prowl is successful
+            if (bot.PlayerNearby(bot.AttackRange, out Transform _player))
             {
-                bot.CanHide = false;
-                bot.coroutine = StartCoroutine(bot.CountDuration(bot.MaxHideDuration, bot.AfterHide));
+                // reset coroutine before setting task as successful
+                bot.ResetCoroutine();
+                ThisTask.Succeed();
+                return;
             }
+            
+            // if player is not walking to self anymore, reset coroutine
+            if (!bot.PlayerIsMovingTowardsEnemy(player))
+            {
+                // reset coroutine, if player is no longer moving towards self
+                bot.ResetCoroutine();
+            }
+
+            // handle player still being seen
+            // complete task (stop prowling) if player is moving towards self for set time
+            // wait for coroutine if there is already a coroutine running
+            if (bot.coroutine != null) return;
+            // start new coroutine if there are no coroutines
+            bot.coroutine = bot.StartCoroutine(bot.CountDuration(bot.MinFaceEnemyDuration, () => {
+                    // go into hiding
+                    if (bot.GetNearestHidingSpot(out Vector3 hidingSpot))
+                    {
+                        // set destination if not at hiding position
+                        bot.Agent.SetDestination(hidingSpot);
+                        // set the bot speed to run speed to run to hiding spot
+                        bot.Agent.speed = bot.RunSpeed;
+                    }
+                    // task is successful (exit task)
+                    ThisTask.Succeed();
+                }));
         }
 
         // attack
@@ -224,55 +187,95 @@ namespace Agent
                 // damage player
                 player.GetComponent<IDamagable>()?.Damage(1f);
             }
+            // stay in attack for attack duration
+            bot.StartCoroutine(bot.CountDuration(bot.AttackDuration, () => {
+                    // set the bot speed to run speed to prepare to flee after attack
+                    bot.Agent.speed = bot.RunSpeed;
+                    ThisTask.Succeed();
+                }));
+        }
+
+        // hide
+        [Task]
+        void MoveToHidingLocation()
+        {
+            // log action
+            Debug.Log("Move to Hiding Location");
+            // when reached hiding location, task is successful
+            if (bot.Agent.remainingDistance <= bot.Agent.stoppingDistance)
+                ThisTask.Succeed();
+        }
+
+        [Task]
+        void Hide()
+        {
+            // log action
+            Debug.Log("Hide");
+            // ensure coroutine counter to count max hide duration has started
+            if (bot.coroutine != null)
+            {
+                // if can see player, means they found us, so hiding has failed
+                if (bot.PlayerSeen(bot.AlertRadius, out Transform player))
+                {
+                    // reset coroutine
+                    bot.ResetCoroutine();
+                    // fail task
+                    ThisTask.Fail();
+                }
+                return;
+            }
+            // start coroutine to count max hide duration
+            // handle hiding, ensure can only hide for set amount of time
+            bot.coroutine = bot.StartCoroutine(bot.CountDuration(bot.MaxHideDuration, () => {
+                    // after hiding for max hide duration, flee
+                    // set the bot speed to run speed to prepare to flee
+                    bot.Agent.speed = bot.RunSpeed;
+                    // so mark task as successful
+                    ThisTask.Succeed();
+                }));
         }
 
         // flee
-        [Task]
-        bool IsHiding()
-        {
-            return bot.Hiding;
-        }
-
-        [Task]
-        bool HasNotFledFromPlayer()
-        {
-            // check if can flee and player is within flee range
-            if (bot.CanFlee && bot.PlayerNearby(bot.FleeDistance, out Transform player))
-            {
-                // run away from player by setting destination as vector away from player
-                bot.Agent.SetDestination(transform.position +  
-                    ((transform.position - player.position).normalized * (1f + bot.Agent.stoppingDistance)));
-                
-                // set the bot speed to run speed
-                bot.Agent.speed = bot.RunSpeed;
-
-                return true;
-            }
-            // reset flee counter once sucessfully fled
-            bot.CanFlee = true;
-            if (bot.coroutine != null)
-            {
-                bot.StopCoroutine(bot.coroutine);
-                bot.coroutine = null;
-            }
-            return false;
-        }
-
         [Task]
         void Flee()
         {
             // log action
             Debug.Log("Flee");
-            // handle fleeing, ensure can only flee for set amount of time
-            if (bot.CanFlee)
+            // start coroutine to ensure dont flee for too long
+            if (bot.coroutine != null)
             {
-                bot.CanFlee = false;
-                bot.coroutine = StartCoroutine(bot.CountDuration(bot.MaxFleeDuration, bot.AfterFlee));
+                bot.coroutine = bot.StartCoroutine(bot.CountDuration(bot.MaxFleeDuration, () => {
+                    // successfully fled after max flee duration
+                    ThisTask.Succeed();
+                }));
             }
+            // flee from player if player still within flee distance
+            if (bot.PlayerNearby(bot.FleeDistance, out Transform player))
+            {
+                // run away from player by setting destination as vector away from player
+                bot.Agent.SetDestination(transform.position +  
+                    ((transform.position - player.position).normalized * (1f + bot.Agent.stoppingDistance)));
+                return;
+            }
+            // handle successfully fleeing from player
+            // stop coroutine counter if its not null
+            if (bot.coroutine != null)
+            {
+                bot.StopCoroutine(bot.coroutine);
+                bot.coroutine = null;
+            }
+            // once successfully fled, task is successful
+            ThisTask.Succeed();
         }
 
         // lay trap tree
         // lay trap
+        [Task]
+        bool CanLayTrap()
+        {
+            return bot.CanLayTrap;
+        }
+
         [Task]
         bool IsAtCorridor()
         {
@@ -297,34 +300,33 @@ namespace Agent
             bot.PlaceTrap();
             // set can lay trap to false
             bot.CanLayTrap = false;
+            // stay in lay trap for lay trap duration
+            bot.StartCoroutine(bot.CountDuration(bot.LayTrapDuration, () => {
+                    ThisTask.Succeed();
+                }));
         }
 
         // push tree
+        [Task]
+        bool CanPush()
+        {
+            return bot.CanPush;
+        }
+
         // wait
         [Task]
-        bool IsAtWaitLocation()
+        void FindNearestWaitLocation()
         {
-            // check if can push
-            if (!bot.CanPush) return false;
-
-            if (!bot.Waiting && !bot.Pushing)
+            // set destination to nearest push spot
+            if (bot.GetNearestPushSpot(out Vector3 pushingSpot))
             {
-                if (bot.GetNearestPushSpot(out Vector3 pushingSpot))
-                {
-                    // set destination if not at pushing position
-                    bot.Agent.SetDestination(pushingSpot);
-                    // set the bot speed to walk speed
-                    bot.Agent.speed = bot.WalkSpeed;
-                }
+                // set destination if not at pushing position
+                bot.Agent.SetDestination(pushingSpot);
+                // set the bot speed to walk speed
+                bot.Agent.speed = bot.WalkSpeed;
+                // set task to successful
+                ThisTask.Succeed();
             }
-            else if (bot.Agent.remainingDistance <= bot.Agent.stoppingDistance)
-            {
-                // when at hiding pushing, start pushing
-                bot.Waiting = true;
-                return true;
-            }
-
-            return false;
         }
 
         [Task]
@@ -332,19 +334,47 @@ namespace Agent
         {
             // log action
             Debug.Log("Move to Wait Location");
+            // when reached waiting location, task is successful
+            if (bot.Agent.remainingDistance <= bot.Agent.stoppingDistance)
+                ThisTask.Succeed();
         }
 
         // push
         [Task]
-        bool IsWithinPushRange()
+        void Wait()
         {
-            // handle waiting, ensure can only wait for set amount of time
-            if (bot.CanWait)
+            // start a coroutine to only wait for set amount if time before giving up
+            if (bot.coroutine == null)
             {
-                bot.CanWait = false;
-                bot.coroutine = StartCoroutine(bot.CountDuration(bot.MaxHideDuration, bot.AfterHide));
+                // after max wait duration, give up
+                bot.StartCoroutine(bot.CountDuration(bot.MaxWaitDuration, () => {
+                        // set can push to false, take it as a push attempt
+                        bot.CanPush = false;
+                        ThisTask.Fail();
+                    }));
             }
-            return false;
+
+            // check for task successful result
+            // get reference to pushable object
+            Collider[] hit = Physics.OverlapSphere(transform.position, bot.Agent.stoppingDistance, LayerMask.GetMask("Obstacles"));
+            // check if anything is detected
+            if (hit.Length > 0)
+            {
+                Vector3 frontOfObstacle = hit[0].transform.forward;
+                // check for players within range, if there are, transition to push state
+                hit = Physics.OverlapSphere(transform.position + frontOfObstacle, bot.PlayerInObstacleRange);
+                // check if the player is hit, if so, switch to push state
+                foreach (Collider obj in hit)
+                {
+                    if (obj.CompareTag("Player"))
+                    {
+                        // once player is within range, task is successful
+                        bot.ResetCoroutine();
+                        ThisTask.Succeed();
+                        return;
+                    }
+                }
+            }
         }
 
         [Task]
@@ -352,6 +382,8 @@ namespace Agent
         {
             // log action
             Debug.Log("Push");
+            // dont allow stun when pushing
+            bot.CanStun = false;
             // get reference to pushable object
             Collider[] hit = Physics.OverlapSphere(transform.position, bot.Agent.stoppingDistance, LayerMask.GetMask("Obstacles"));
             // try to get pushable object script
@@ -362,38 +394,42 @@ namespace Agent
             if (hit.Length <= 0 || pushableObject == null || !pushableObject.DropObject(out Vector3 pushSpot))
             {
                 // couldnt push object
+                ThisTask.Fail();
                 return;
             }
-            // push object
-            // cont allow push
+            // after pushing object
+            // move agent to push spot
+            bot.Agent.Warp(pushSpot);
+            // dont allow push
             bot.CanPush = false;
-            // dont allow stun when pushing
-            bot.CanStun = false;
-            // enter pushing
-            bot.Pushing = true;
             // count push duration
-            bot.coroutine = StartCoroutine(bot.CountDuration(bot.PushDuration, bot.AfterPush));
+            bot.coroutine = StartCoroutine(bot.CountDuration(bot.PushDuration, () => {
+                // allow stun once task is successful
+                bot.CanStun = true;
+                // once push is over, task is successful
+                ThisTask.Succeed();
+            }));
         }
 
         // patrol tree
         // patrol
         [Task]
-        bool HasReachedTargetLocation()
-        {
-            return bot.Agent.remainingDistance <= bot.Agent.stoppingDistance;
-        }
-
-        [Task]
         void Patrol()
         {
             // log action
             Debug.Log("Patrol");
-            // get a random point to walk to, ensure it is possible to get a position
-            if (!bot.RandomPoint(transform.position, bot.PatrolRadius, out Vector3 point)) return;
-            // set target position to walk towards
-            bot.Agent.SetDestination(point);
-            // set the bot speed to walk speed
-            bot.Agent.speed = bot.WalkSpeed;
+            // set a new destination if reached target location
+            if (bot.Agent.remainingDistance <= bot.Agent.stoppingDistance)
+            {
+                // get a random point to walk to, ensure it is possible to get a position
+                if (!bot.RandomPoint(transform.position, bot.PatrolRadius, out Vector3 point)) return;
+                // set target position to walk towards
+                bot.Agent.SetDestination(point);
+                // set the bot speed to walk speed
+                bot.Agent.speed = bot.WalkSpeed;
+            }
+            // complete task
+            ThisTask.Succeed();
         }
     }
 }

@@ -176,7 +176,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scripts:
   - {fileID: 4900000, guid: 6374b8efca29e1341bd637bb7bfc41b1, type: 3}
-  autoReset: 1
+  autoReset: 0
   tickOn: 0
   sourceInfos:
   - isFoldout: 1
@@ -233,6 +233,17 @@ MonoBehaviour:
   <PushTransitionChance>k__BackingField: 0.3
   <LayTrapChance>k__BackingField: 0.3
   trapPrefab: {fileID: 6860700613610902670, guid: ecf8b12b56a8ff04bb334fb142fb3807, type: 3}
+  Stunned: 0
+  TrapTriggered: 0
+  Hiding: 0
+  Waiting: 0
+  Pushing: 0
+  CanHide: 0
+  CanWait: 0
+  CanStun: 0
+  CanFlee: 0
+  CanLayTrap: 0
+  CanPush: 0
 --- !u!1001 &4660696405370431976
 PrefabInstance:
   m_ObjectHideFlags: 0
