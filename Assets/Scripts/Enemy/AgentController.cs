@@ -54,9 +54,7 @@ namespace Agent
 
         // public booleans
         [HideInInspector]
-        public bool Stunned, TrapTriggered; 
-        [HideInInspector]
-        public bool CanStun, CanLayTrap, CanPush;
+        public bool Stunned, TrapTriggered, CanLayTrap, CanPush, CanStun;
 
         // coroutine manager
         [HideInInspector] public Coroutine coroutine;
@@ -70,10 +68,9 @@ namespace Agent
             // set booleans
             Stunned = false;
             TrapTriggered = false;
-
+            CanLayTrap = false;
+            CanPush = false;
             CanStun = true;
-            CanLayTrap = true;
-            CanPush = true;
 
             // set health
             CurrentHealth = maxHealth;
