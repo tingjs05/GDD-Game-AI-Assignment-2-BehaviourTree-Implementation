@@ -351,10 +351,12 @@ namespace Agent
             bot.Agent.speed = 0f;
             // place down trap
             bot.PlaceTrap();
-            // set can lay trap to false
-            bot.CanLayTrap = false;
+            
             // stay in lay trap for lay trap duration
             bot.coroutine = bot.StartCoroutine(bot.CountDuration(bot.LayTrapDuration, () => {
+                    // set can lay trap to false
+                    bot.CanLayTrap = false;
+                    // complete task
                     taskCompleted = true;
                 }));
         }
@@ -469,12 +471,12 @@ namespace Agent
             // after pushing object
             // move agent to push spot
             bot.Agent.Warp(pushSpot);
-            // dont allow push
-            bot.CanPush = false;
             // count push duration
             bot.coroutine = StartCoroutine(bot.CountDuration(bot.PushDuration, () => {
                 // allow stun once task is successful
                 bot.CanStun = true;
+                // dont allow push
+                bot.CanPush = false;
                 // once push is over, task is successful
                 taskCompleted = true;
             }));
