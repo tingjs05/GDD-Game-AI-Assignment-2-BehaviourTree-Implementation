@@ -2449,26 +2449,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy
       objectReference: {fileID: 0}
-    - target: {fileID: 4145416102651812882, guid: 05735df5653361f4ba1b937092a3b013, type: 3}
-      propertyPath: <AttackRange>k__BackingField
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4145416102651812882, guid: 05735df5653361f4ba1b937092a3b013, type: 3}
-      propertyPath: <PlaceTrapCooldown>k__BackingField.x
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4145416102651812882, guid: 05735df5653361f4ba1b937092a3b013, type: 3}
-      propertyPath: <PlaceTrapCooldown>k__BackingField.y
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 4145416102651812882, guid: 05735df5653361f4ba1b937092a3b013, type: 3}
-      propertyPath: <PushCheckCooldown>k__BackingField.x
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4145416102651812882, guid: 05735df5653361f4ba1b937092a3b013, type: 3}
-      propertyPath: <PushCheckCooldown>k__BackingField.y
-      value: 8
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

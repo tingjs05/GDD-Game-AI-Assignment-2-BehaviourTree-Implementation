@@ -121,13 +121,17 @@ namespace Agent
         // periodically reset to true to allow actions to be taken
         void ResetCanLayTrap()
         {
-            CanLayTrap = true;
+            // random chance to be able to transition
+            if (Random.Range(0f, 1f) < LayTrapChance) CanLayTrap = true;
+            // reset timer
             StartCoroutine(CountDuration(Random.Range(PlaceTrapCooldown.x, PlaceTrapCooldown.y), ResetCanLayTrap, false));
         }
 
         void ResetCanPush()
         {
-            CanPush = true;
+            // random chance to be able to transition
+            if (Random.Range(0f, 1f) < PushTransitionChance) CanPush = true;
+            // reset timer
             StartCoroutine(CountDuration(Random.Range(PushCheckCooldown.x, PushCheckCooldown.y), ResetCanPush, false));
         }
 

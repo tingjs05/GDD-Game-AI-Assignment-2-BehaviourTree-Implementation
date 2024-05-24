@@ -344,8 +344,7 @@ namespace Agent
             if (!bot.CanLayTrap) return false;
             // randomly has a chance to transition to lay trapp state, if in a corridor
             if (TrappablePositionManager.Instance != null && 
-                TrappablePositionManager.Instance.IsInCorridor(transform.position) &&
-                Random.Range(0f, 1f) < bot.LayTrapChance)
+                TrappablePositionManager.Instance.IsInCorridor(transform.position))
                     return true;
             return false;
         }
@@ -369,13 +368,13 @@ namespace Agent
             if (bot.coroutine != null) return;
             // do not let agent move when in this state
             bot.Agent.speed = 0f;
+            // set can lay trap to false
+            bot.CanLayTrap = false;
             // place down trap
             bot.PlaceTrap();
             
             // stay in lay trap for lay trap duration
             bot.coroutine = bot.StartCoroutine(bot.CountDuration(bot.LayTrapDuration, () => {
-                    // set can lay trap to false
-                    bot.CanLayTrap = false;
                     // complete task
                     taskCompleted = true;
                 }));
@@ -497,12 +496,12 @@ namespace Agent
             // after pushing object
             // move agent to push spot
             bot.Agent.Warp(pushSpot);
+            // dont allow push
+            bot.CanPush = false;
             // count push duration
             bot.coroutine = StartCoroutine(bot.CountDuration(bot.PushDuration, () => {
                 // allow stun once task is successful
                 bot.CanStun = true;
-                // dont allow push
-                bot.CanPush = false;
                 // once push is over, task is successful
                 taskCompleted = true;
             }));
