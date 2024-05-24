@@ -57,7 +57,10 @@ namespace Agent
             // if task is mark as completed, task is successful
             if (taskCompleted) 
             {
+                // mark task as completed
                 ThisTask.Succeed();
+                // reset task completed
+                taskCompleted = false;
                 return;
             }
             // reset task completed boolean
@@ -141,7 +144,10 @@ namespace Agent
             // if task is mark as completed, task is successful
             if (taskCompleted) 
             {
+                // mark task as completed
                 ThisTask.Succeed();
+                // reset task completed
+                taskCompleted = false;
                 return;
             }
             // reset task completed boolean
@@ -205,7 +211,10 @@ namespace Agent
             // if task is mark as completed, task is successful
             if (taskCompleted) 
             {
+                // mark task as completed
                 ThisTask.Succeed();
+                // reset task completed
+                taskCompleted = false;
                 return;
             }
             // reset task completed boolean
@@ -242,7 +251,10 @@ namespace Agent
             // if task is mark as completed, task is successful
             if (taskCompleted) 
             {
+                // mark task as completed
                 ThisTask.Succeed();
+                // reset task completed
+                taskCompleted = false;
                 return;
             }
             // reset task completed boolean
@@ -285,7 +297,10 @@ namespace Agent
             // if task is mark as completed, task is successful
             if (taskCompleted) 
             {
+                // mark task as completed
                 ThisTask.Succeed();
+                // reset task completed
+                taskCompleted = false;
                 return;
             }
             // reset task completed boolean
@@ -341,7 +356,10 @@ namespace Agent
             // if task is mark as completed, task is successful
             if (taskCompleted) 
             {
+                // mark task as completed
                 ThisTask.Succeed();
+                // reset task completed
+                taskCompleted = false;
                 return;
             }
             // reset task completed boolean
@@ -401,7 +419,10 @@ namespace Agent
             // if task is mark as completed, task is successful
             if (taskCompleted) 
             {
+                // mark task as completed
                 ThisTask.Fail();
+                // reset task completed
+                taskCompleted = false;
                 return;
             }
             // reset task completed boolean
@@ -447,7 +468,10 @@ namespace Agent
             // if task is mark as completed, task is successful
             if (taskCompleted) 
             {
+                // mark task as completed
                 ThisTask.Succeed();
+                // reset task completed
+                taskCompleted = false;
                 return;
             }
             // reset task completed boolean
