@@ -26,6 +26,11 @@ namespace Agent
             taskCompleted = false;
         }
 
+        void Update()
+        {
+            panda.Tick();
+        }
+
         // priorities tree
         // death
         [Task]
