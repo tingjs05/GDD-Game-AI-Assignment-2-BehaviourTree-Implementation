@@ -12,12 +12,18 @@ namespace Agent
         PandaBehaviour panda;
         AgentController bot;
 
+        // public boolean to manage task completion
+        [HideInInspector] public bool taskCompleted;
+
         // Start is called before the first frame update
         void Start()
         {
             // get componenets
             panda = GetComponent<PandaBehaviour>();
             bot = GetComponent<AgentController>();
+
+            // set task completed boolean
+            taskCompleted = false;
         }
 
         // priorities tree
@@ -52,12 +58,22 @@ namespace Agent
         {
             // log action
             Debug.Log("Stunned");
+
+            // if task is mark as completed, task is successful
+            if (taskCompleted) 
+            {
+                ThisTask.Succeed();
+                return;
+            }
+            // reset task completed boolean
+            taskCompleted = false;
+
             // wait for stun duration
             if (bot.coroutine != null && !bot.Stunned) bot.StopCoroutine(bot.coroutine);
             // wait for stun duration, after that, set stun to false and complete task
             bot.coroutine = bot.StartCoroutine(bot.CountDuration(bot.StunDuration, () => {
                     bot.Stunned = false;
-                    ThisTask.Succeed();
+                    taskCompleted = true;
                 }));
         }
 
@@ -80,7 +96,12 @@ namespace Agent
             // log action
             Debug.Log("Move to Trap");
             // set trap triggered boolean to false when target destination is reached
-            if (bot.Agent.remainingDistance <= bot.Agent.stoppingDistance) bot.TrapTriggered = false;
+            if (bot.Agent.remainingDistance <= bot.Agent.stoppingDistance) 
+            {
+                bot.TrapTriggered = false;
+                // task is successful
+                ThisTask.Succeed();
+            }
         }
 
         // attack tree
@@ -126,6 +147,15 @@ namespace Agent
             // log action
             Debug.Log("Prowl");
 
+            // if task is mark as completed, task is successful
+            if (taskCompleted) 
+            {
+                ThisTask.Succeed();
+                return;
+            }
+            // reset task completed boolean
+            taskCompleted = false;
+
             // check if player is still seen
             if (!bot.PlayerSeen(bot.AlertRadius, out Transform player)) 
             {
@@ -165,7 +195,7 @@ namespace Agent
                         bot.Agent.speed = bot.RunSpeed;
                     }
                     // task is successful (exit task)
-                    ThisTask.Succeed();
+                    taskCompleted = true;
                 }));
         }
 
@@ -181,6 +211,16 @@ namespace Agent
         {
             // log action
             Debug.Log("Attack");
+
+            // if task is mark as completed, task is successful
+            if (taskCompleted) 
+            {
+                ThisTask.Succeed();
+                return;
+            }
+            // reset task completed boolean
+            taskCompleted = false;
+
             // attack player
             if (bot.PlayerNearby(bot.AttackRange, out Transform player))
             {
@@ -191,7 +231,7 @@ namespace Agent
             bot.StartCoroutine(bot.CountDuration(bot.AttackDuration, () => {
                     // set the bot speed to run speed to prepare to flee after attack
                     bot.Agent.speed = bot.RunSpeed;
-                    ThisTask.Succeed();
+                    taskCompleted = true;
                 }));
         }
 
@@ -211,6 +251,16 @@ namespace Agent
         {
             // log action
             Debug.Log("Hide");
+
+            // if task is mark as completed, task is successful
+            if (taskCompleted) 
+            {
+                ThisTask.Succeed();
+                return;
+            }
+            // reset task completed boolean
+            taskCompleted = false;
+
             // ensure coroutine counter to count max hide duration has started
             if (bot.coroutine != null)
             {
@@ -231,7 +281,7 @@ namespace Agent
                     // set the bot speed to run speed to prepare to flee
                     bot.Agent.speed = bot.RunSpeed;
                     // so mark task as successful
-                    ThisTask.Succeed();
+                    taskCompleted = true;
                 }));
         }
 
@@ -241,12 +291,22 @@ namespace Agent
         {
             // log action
             Debug.Log("Flee");
+
+            // if task is mark as completed, task is successful
+            if (taskCompleted) 
+            {
+                ThisTask.Succeed();
+                return;
+            }
+            // reset task completed boolean
+            taskCompleted = false;
+
             // start coroutine to ensure dont flee for too long
             if (bot.coroutine != null)
             {
                 bot.coroutine = bot.StartCoroutine(bot.CountDuration(bot.MaxFleeDuration, () => {
                     // successfully fled after max flee duration
-                    ThisTask.Succeed();
+                    taskCompleted = true;
                 }));
             }
             // flee from player if player still within flee distance
@@ -294,6 +354,16 @@ namespace Agent
         {
             // log action
             Debug.Log("Lay Trap");
+
+            // if task is mark as completed, task is successful
+            if (taskCompleted) 
+            {
+                ThisTask.Succeed();
+                return;
+            }
+            // reset task completed boolean
+            taskCompleted = false;
+
             // do not let agent move when in this state
             bot.Agent.speed = 0f;
             // place down trap
@@ -302,7 +372,7 @@ namespace Agent
             bot.CanLayTrap = false;
             // stay in lay trap for lay trap duration
             bot.StartCoroutine(bot.CountDuration(bot.LayTrapDuration, () => {
-                    ThisTask.Succeed();
+                    taskCompleted = true;
                 }));
         }
 
@@ -343,6 +413,18 @@ namespace Agent
         [Task]
         void Wait()
         {
+            // log action
+            Debug.Log("Wait");
+
+            // if task is mark as completed, task is successful
+            if (taskCompleted) 
+            {
+                ThisTask.Fail();
+                return;
+            }
+            // reset task completed boolean
+            taskCompleted = false;
+
             // start a coroutine to only wait for set amount if time before giving up
             if (bot.coroutine == null)
             {
@@ -350,7 +432,7 @@ namespace Agent
                 bot.StartCoroutine(bot.CountDuration(bot.MaxWaitDuration, () => {
                         // set can push to false, take it as a push attempt
                         bot.CanPush = false;
-                        ThisTask.Fail();
+                        taskCompleted = true;
                     }));
             }
 
@@ -382,6 +464,16 @@ namespace Agent
         {
             // log action
             Debug.Log("Push");
+
+            // if task is mark as completed, task is successful
+            if (taskCompleted) 
+            {
+                ThisTask.Succeed();
+                return;
+            }
+            // reset task completed boolean
+            taskCompleted = false;
+            
             // dont allow stun when pushing
             bot.CanStun = false;
             // get reference to pushable object
@@ -407,7 +499,7 @@ namespace Agent
                 // allow stun once task is successful
                 bot.CanStun = true;
                 // once push is over, task is successful
-                ThisTask.Succeed();
+                taskCompleted = true;
             }));
         }
 
