@@ -150,6 +150,8 @@ namespace Agent
             // check if player is still seen
             if (!bot.PlayerSeen(bot.AlertRadius, out Transform player)) 
             {
+                // reset coroutine before setting task as failed
+                bot.ResetCoroutine();
                 // if player is no longer seen, task failed
                 ThisTask.Fail();
                 return;
@@ -290,7 +292,7 @@ namespace Agent
             taskCompleted = false;
 
             // start coroutine to ensure dont flee for too long
-            if (bot.coroutine != null)
+            if (bot.coroutine == null)
             {
                 bot.coroutine = bot.StartCoroutine(bot.CountDuration(bot.MaxFleeDuration, () => {
                         // successfully fled after max flee duration
