@@ -28,7 +28,7 @@ namespace Astar
                 // do not run if node manager instance is not found
                 if (NodeManager.Instance == null) return;
                 // set the max distance for a connection between nodes
-                float maxDistance = includeDiagonal? frequency * Mathf.Sqrt(2) : frequency;
+                float maxDistance = includeDiagonal? (float) System.Math.Round(frequency * Mathf.Sqrt(2), 2) : frequency;
                 // loop through each node to find which nodes can form connection
                 foreach (Node node in NodeManager.Instance.nodes)
                 {

@@ -1088,14 +1088,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pointOfOrigin: {x: -8.5, y: 0, z: -5.5}
   gridSize: {x: 17, y: 11}
-  gridFrequency: 1
+  gridFrequency: 0.6
   gridObstacleDetectionRange: 0.25
   obstacleLayerMask:
     serializedVersion: 2
     m_Bits: 64
   showGridSetupGizmos: 0
   showObstacleDetectionRange: 0
-  showNodeConnections: 1
+  showNodeConnections: 0
   showObstructedNodes: 1
   showGizmos: 1
 --- !u!114 &1039706400
