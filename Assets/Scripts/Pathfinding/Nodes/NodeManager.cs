@@ -8,9 +8,12 @@ namespace Astar
     {
         public class NodeManager : MonoBehaviour
         {
+            // static singleton instances
             public static NodeManager Instance;
+            // list to store all the nodes
             public List<Node> nodes = new List<Node>();
 
+            // singleton
             void Awake()
             {
                 if (Instance == null)
@@ -19,6 +22,7 @@ namespace Astar
                     Destroy(gameObject);
             }
 
+            // set instance when in inspector, ensure only one instance running at once (singleton)
             void OnDrawGizmosSelected()
             {
                 if (Instance == this)
