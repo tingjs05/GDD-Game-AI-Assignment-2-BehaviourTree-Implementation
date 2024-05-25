@@ -23,6 +23,8 @@ namespace Astar
                 if (GUILayout.Button("Generate Grid"))
                 {
                     gridGenerator.GenerateGrid();
+                    if (!gridGenerator.showNodeConnections) return;
+                    gridGenerator.GenerateNodes();
                 }
             }
         }

@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Astar.Nodes;
+using UnityEditor.MemoryProfiler;
 
 namespace Astar
 {
     namespace Grid
     {
-        [System.Serializable]
+        [RequireComponent(typeof(NodeManager))]
         public class GridGenerator : MonoBehaviour
         {
             // editor fields
@@ -21,20 +23,23 @@ namespace Astar
 
             [Header("Gizmos")]
             public bool showGridSetupGizmos = false;
-            public bool showObstacleDerectionRange = false;
+            public bool showObstacleDetectionRange = false;
+            public bool showNodeConnections = false;
             public bool showObstructedNodes = true;
             public bool showGizmos = true;
 
             // list to store grid nodes
-            [HideInInspector] public List<Vector3> nodePositions = new List<Vector3>();
-            [HideInInspector] public List<Vector3> obstructedNodePositions = new List<Vector3>();
+            List<Vector3> nodePositions = new List<Vector3>();
+            List<Vector3> obstructedNodePositions = new List<Vector3>();
 
             // Start is called before the first frame update
             void Start()
             {
                 GenerateGrid();
+                GenerateNodes();
             }
 
+            // method to generate the grid
             public void GenerateGrid()
             {
                 // reset lists
@@ -51,8 +56,8 @@ namespace Astar
                     {
                         // set node position
                         currentPosition = new Vector3(pointOfOrigin.x + x, pointOfOrigin.y, pointOfOrigin.z + z);
-                        // add value to list depending on if there are obstacles nearby
-                        if (ObstacleNearby(currentPosition))
+                        // add value to list depending on if there are obstacles near the node
+                        if (Physics.OverlapSphere(currentPosition, gridObstacleDetectionRange, obstacleLayerMask).Length > 0)
                             obstructedNodePositions.Add(currentPosition);
                         else
                             nodePositions.Add(currentPosition);
@@ -66,9 +71,29 @@ namespace Astar
                 }
             }
 
-            bool ObstacleNearby(Vector3 position)
+            // method to generate node classes at each node position, and getting the connections between each node
+            public void GenerateNodes()
             {
-                return Physics.OverlapSphere(position, gridObstacleDetectionRange, obstacleLayerMask).Length > 0;
+                // error prevention
+                if (NodeManager.Instance == null)
+                {
+                    Debug.LogError("NodeManager instance is null!");
+                    return;
+                }
+                // ensure that there are node positions already set
+                if (nodePositions == null || nodePositions.Count <= 0) return;
+
+                // create a node for each node position
+                foreach (Vector3 nodePosition in nodePositions)
+                {
+                    NodeManager.Instance.nodes.Add(new Node(nodePosition));
+                }
+
+                // loop through the nodes list and generate connections between the nodes
+                foreach (Node node in NodeManager.Instance.nodes)
+                {
+                    node.GenerateConnections(gridFrequency);
+                }
             }
 
             void OnDrawGizmos() 
@@ -99,6 +124,18 @@ namespace Astar
                     return;
                 }
 
+                // show node connections if needed
+                if (showNodeConnections && NodeManager.Instance != null)
+                {
+                    foreach (Node node in NodeManager.Instance.nodes)
+                    {
+                        foreach (Node.Connection connection in node.connections)
+                        {
+                            Debug.DrawRay(node.position, connection.node.position - node.position, Color.black);
+                        }
+                    }
+                }
+
                 // if there are no nodes, generate grid
                 if (nodePositions.Count <= 0) GenerateGrid();
                 // show grid
@@ -108,11 +145,9 @@ namespace Astar
                     Gizmos.color = Color.green;
                     Gizmos.DrawSphere(position, 0.1f);
                     // draw obstacle detection range
-                    if (showObstacleDerectionRange)
-                    {
-                        Gizmos.color = Color.white;
-                        Gizmos.DrawWireSphere(position, gridObstacleDetectionRange);
-                    }
+                    if (!showObstacleDetectionRange) continue;
+                    Gizmos.color = Color.white;
+                    Gizmos.DrawWireSphere(position, gridObstacleDetectionRange);
                 }
 
                 // return if show obstructed nodes is false
@@ -125,7 +160,8 @@ namespace Astar
                     // draw grid node
                     Gizmos.DrawSphere(position, 0.1f);
                     // draw obstacle detection range
-                    if (showObstacleDerectionRange) Gizmos.DrawWireSphere(position, gridObstacleDetectionRange);
+                    if (!showObstacleDetectionRange) continue;
+                    Gizmos.DrawWireSphere(position, gridObstacleDetectionRange);
                 }
             }
         }
