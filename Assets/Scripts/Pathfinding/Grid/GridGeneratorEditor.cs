@@ -3,24 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace Astar.Grid
+namespace Astar
 {
-    [CustomEditor(typeof(GridGenerator))]
-    public class GridGeneratorEditor : Editor
+    namespace Grid
     {
-        public override void OnInspectorGUI()
+        [CustomEditor(typeof(GridGenerator))]
+        public class GridGeneratorEditor : Editor
         {
-            GridGenerator gridGenerator = (GridGenerator) target;
-
-            // draw default editor
-            DrawDefaultInspector();
-            // add a small space between custom GUI and default GUI
-            EditorGUILayout.Space();
-
-            // generate grid
-            if (GUILayout.Button("Generate Grid"))
+            public override void OnInspectorGUI()
             {
-                gridGenerator.GenerateGrid();
+                GridGenerator gridGenerator = (GridGenerator) target;
+
+                // draw default editor
+                DrawDefaultInspector();
+                // add a small space between custom GUI and default GUI
+                EditorGUILayout.Space();
+
+                // generate grid
+                if (GUILayout.Button("Generate Grid"))
+                {
+                    gridGenerator.GenerateGrid();
+                }
             }
         }
     }
