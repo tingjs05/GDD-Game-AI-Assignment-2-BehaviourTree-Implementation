@@ -7,6 +7,7 @@ namespace Astar
 {
     namespace Nodes
     {
+        [ExecuteInEditMode]
         public class NodeManager : MonoBehaviour
         {
             // static singleton instances
@@ -23,12 +24,13 @@ namespace Astar
                     Destroy(gameObject);
             }
 
-            // set instance when in inspector, ensure only one instance running at once (singleton)
-            void OnDrawGizmosSelected()
+            void Update()
             {
-                if (Instance == this)
-                    return;
-                else if (Instance == null)
+                // do not run when game is playing
+                if (Application.isPlaying) return;
+
+                // set singleton
+                if (Instance == null)
                     Instance = this;
                 else if (Instance != this)
                     Destroy(gameObject);
