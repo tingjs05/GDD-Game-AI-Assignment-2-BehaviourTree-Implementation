@@ -12,25 +12,16 @@ namespace Astar.Grid
         {
             GridGenerator gridGenerator = (GridGenerator) target;
 
-            // grid setup fields
-            EditorGUILayout.LabelField("Grid Setup Fields", EditorStyles.boldLabel);
-            gridGenerator.pointOfOrigin = EditorGUILayout.Vector3Field("Point of Origin", gridGenerator.pointOfOrigin);
-            gridGenerator.gridSize = EditorGUILayout.Vector2Field("Grid Size", gridGenerator.gridSize);
-            gridGenerator.gridFrequency = EditorGUILayout.FloatField("Grid Frequency", gridGenerator.gridFrequency);
-            // toggle gizmos
-            if (GUILayout.Button("Toggle Grid Setup Gizmos"))
-            {
-                gridGenerator.showGridSetupGizmos = !gridGenerator.showGridSetupGizmos;
-            }
+            // draw default editor
+            DrawDefaultInspector();
+            // add a small space between custom GUI and default GUI
+            EditorGUILayout.Space();
+
             // generate grid
             if (GUILayout.Button("Generate Grid"))
             {
                 gridGenerator.GenerateGrid();
             }
-
-            // pathfinding setup fields
-
-            gridGenerator.showGizmos = EditorGUILayout.Toggle("Show Gizmos", gridGenerator.showGizmos);
         }
     }
 }
