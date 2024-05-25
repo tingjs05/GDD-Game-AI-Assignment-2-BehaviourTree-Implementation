@@ -64,7 +64,7 @@ namespace Astar
                         // iterate position
                         z += gridFrequency;
                         // if it is the last column, reset z to 0 to prepare to iterate through next column
-                        z = (j == (1 / gridFrequency) * gridSize.y)? 0f : z;
+                        z = (j >= (1 / gridFrequency) * gridSize.y)? 0f : z;
                     }
                     // iterate position
                     x += gridFrequency;
@@ -82,6 +82,9 @@ namespace Astar
                 }
                 // ensure that there are node positions already set
                 if (nodePositions == null || nodePositions.Count <= 0) return;
+
+                // reset list before adding nodes
+                NodeManager.Instance.nodes.Clear();
 
                 // create a node for each node position
                 foreach (Vector3 nodePosition in nodePositions)

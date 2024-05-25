@@ -32,9 +32,9 @@ public class Test : MonoBehaviour
     void OnDrawGizmos()
     {
         Gizmos.color = Color.white;
-        Gizmos.DrawSphere(startPos, 0.2f);
+        Gizmos.DrawSphere(startPos, 0.3f);
         Gizmos.color = Color.magenta;
-        Gizmos.DrawSphere(endPos, 0.2f);
+        Gizmos.DrawSphere(endPos, 0.3f);
 
 
         if (pathfinder == null) return;
@@ -42,13 +42,13 @@ public class Test : MonoBehaviour
         Gizmos.color = Color.blue;
         foreach (Node node in pathfinder.open)
         {
-            Gizmos.DrawSphere(node.position, 0.15f);
+            Gizmos.DrawSphere(node.position, 0.2f);
         }
 
         Gizmos.color = Color.cyan;
         foreach (Node node in pathfinder.closed)
         {
-            Gizmos.DrawSphere(node.position, 0.15f);
+            Gizmos.DrawSphere(node.position, 0.2f);
         }
 
         if (path == null) return;
@@ -56,7 +56,7 @@ public class Test : MonoBehaviour
         Gizmos.color = Color.yellow;
         foreach (Node node in path)
         {
-            Gizmos.DrawSphere(node.position, 0.15f);
+            Gizmos.DrawSphere(node.position, 0.2f);
         }
     }
 }

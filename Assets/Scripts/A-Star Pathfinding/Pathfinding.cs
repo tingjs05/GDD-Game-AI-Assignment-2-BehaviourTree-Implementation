@@ -64,10 +64,17 @@ namespace Astar
                 // reset path found boolean
                 pathFound = false;
                 // calculate path
-                while (!pathFound)
+                // while (!pathFound)
+                // {
+                //     CalculatePath(path[0]);
+                // }
+
+                for (int i = 0; i < 50; i++)
                 {
+                    if (pathFound) break;
                     CalculatePath(path[0]);
                 }
+
                 // return path
                 return path;
             }
@@ -91,11 +98,11 @@ namespace Astar
                         return;
                     }
                     // find if the node from the connection is already known
-                    if (open.Contains(connection) && connection.previousNode != null)
+                    if (open.Contains(connection))
                     {
                         // if the current node is cheaper than the connection's previous node
                         // change the previous node connection to current node
-                        if (GetCost(node.position) < GetCost(connection.previousNode.position))
+                        if (connection.previousNode == null || GetCost(node.position) < GetCost(connection.previousNode.position))
                             connection.previousNode = node;
                         // do not add connection to open if it is already known
                         continue;

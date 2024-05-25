@@ -1040,7 +1040,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startPos: {x: -7.35, y: 0, z: 2.46}
-  endPos: {x: -0.39, y: 0, z: -4.59}
+  endPos: {x: 7.41, y: 0, z: -4.01}
 --- !u!1 &1039706397
 GameObject:
   m_ObjectHideFlags: 0
@@ -1088,14 +1088,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pointOfOrigin: {x: -8.5, y: 0, z: -5.5}
   gridSize: {x: 17, y: 11}
-  gridFrequency: 0.25
+  gridFrequency: 1
   gridObstacleDetectionRange: 0.25
   obstacleLayerMask:
     serializedVersion: 2
     m_Bits: 64
   showGridSetupGizmos: 0
   showObstacleDetectionRange: 0
-  showNodeConnections: 0
+  showNodeConnections: 1
   showObstructedNodes: 1
   showGizmos: 1
 --- !u!114 &1039706400
