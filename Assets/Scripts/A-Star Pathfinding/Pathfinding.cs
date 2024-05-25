@@ -91,7 +91,7 @@ namespace Astar
                         return;
                     }
                     // find if the node from the connection is already known
-                    if (open.Contains(connection))
+                    if (open.Contains(connection) && connection.previousNode != null)
                     {
                         // if the current node is cheaper than the connection's previous node
                         // change the previous node connection to current node

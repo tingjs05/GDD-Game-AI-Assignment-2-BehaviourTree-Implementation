@@ -10,12 +10,23 @@ public class Test : MonoBehaviour
     Pathfinding pathfinder;
     List<Node> path;
 
+    bool run = false;
+
     // Start is called before the first frame update
     void Start()
     {
         // creat a new instance of path finder
         pathfinder = new Pathfinding();
-        pathfinder.FindPath(startPos, endPos);
+    }
+
+    void Update()
+    {
+        if (run) return;
+        if (!(NodeManager.Instance.nodes.Count <= 0))
+        {
+            run = true;
+            pathfinder.FindPath(startPos, endPos);
+        }
     }
     
     void OnDrawGizmos()
