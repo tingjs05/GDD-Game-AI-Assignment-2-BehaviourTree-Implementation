@@ -77,7 +77,7 @@ namespace Astar
                 // error prevention
                 if (NodeManager.Instance == null)
                 {
-                    Debug.LogError("NodeManager instance is null!");
+                    Debug.LogError("GridGenerator.cs: NodeManager instance is null! Unable to generate nodes. ");
                     return;
                 }
                 // ensure that there are node positions already set
@@ -129,9 +129,9 @@ namespace Astar
                 {
                     foreach (Node node in NodeManager.Instance.nodes)
                     {
-                        foreach (Node.Connection connection in node.connections)
+                        foreach (Node connection in node.connections)
                         {
-                            Debug.DrawRay(node.position, connection.node.position - node.position, Color.black);
+                            Debug.DrawRay(node.position, connection.position - node.position, Color.black);
                         }
                     }
                 }

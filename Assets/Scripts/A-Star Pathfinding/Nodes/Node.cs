@@ -9,22 +9,9 @@ namespace Astar
     {
         public class Node
         {
-            // struct to store the connections between nodes
-            public struct Connection
-            {
-                public float distance;
-                public Node node;
-
-                public Connection(float _distance, Node _node)
-                {
-                    distance = _distance;
-                    node = _node;
-                }
-            }
-
             // public variables
             public Vector3 position;
-            public List<Connection> connections = new List<Connection>();
+            public List<Node> connections = new List<Node>();
             public Node previousNode;
 
             // constructor
@@ -40,19 +27,13 @@ namespace Astar
                 if (NodeManager.Instance == null) return;
                 // set the max distance for a connection between nodes
                 float maxDistance = includeDiagonal? frequency * Mathf.Sqrt(2) : frequency;
-                float distance;
-
+                // loop through each node to find which nodes can form connection
                 foreach (Node node in NodeManager.Instance.nodes)
                 {
-                    // get the distance between nodes
-                    distance = Vector3.Distance(position, node.position);
                     // ensure node is only within certain distance before making a connection
-                    if (distance > maxDistance) continue;
+                    if (Vector3.Distance(position, node.position) > maxDistance) continue;
                     // add the connection to connections list
-                    connections.Add(new Connection(
-                            distance, 
-                            node
-                        ));
+                    connections.Add(node);
                 }
             }
         }
