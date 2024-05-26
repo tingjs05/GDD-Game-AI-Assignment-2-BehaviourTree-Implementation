@@ -1086,7 +1086,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b87541768dd6764bb4673ed4838f1f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pointOfOrigin: {x: -8.5, y: 0, z: -5.5}
+  pointOfOrigin: {x: -8.7, y: 0, z: -5.7}
   gridSize: {x: 17, y: 11}
   gridFrequency: 0.6
   gridObstacleDetectionRange: 0.25

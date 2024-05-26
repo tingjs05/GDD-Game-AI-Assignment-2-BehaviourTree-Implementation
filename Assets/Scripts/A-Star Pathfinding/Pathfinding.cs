@@ -29,6 +29,12 @@ namespace Astar
                     Debug.LogError("Pathfinding.cs: NodeManager instance is null! Unable to find path. ");
                     return null;
                 }
+                // ensure nodes are generated
+                if (NodeManager.Instance.nodes.Count <= 0)
+                {
+                    Debug.LogWarning("Pathfinding.cs: FindPath() was called before nodes are generated! Process has been terminated. ");
+                    return null;
+                }
 
                 // reset boolean
                 pathFound = false;
@@ -41,6 +47,8 @@ namespace Astar
                 path.Clear();
                 // get start and end nodes
                 (startNode, endNode) = NodeManager.Instance.GetNearestNode(startPosition, endPosition);
+                // reset the previous node of the start node
+                startNode.previousNode = null;
                 // add start node to open list
                 open.Add(startNode);
 
@@ -75,6 +83,8 @@ namespace Astar
                     CalculatePath(path[0]);
                 }
 
+                if (!pathFound) Debug.Log("path not found!");
+
                 // return path
                 return path;
             }
@@ -92,7 +102,7 @@ namespace Astar
                     if (connection.Equals(endNode))
                     {
                         // set previous node
-                        connection.previousNode = node;
+                        endNode.previousNode = node;
                         // complete path find
                         pathFound = true;
                         return;
@@ -102,7 +112,7 @@ namespace Astar
                     {
                         // if the current node is cheaper than the connection's previous node
                         // change the previous node connection to current node
-                        if (connection.previousNode == null || GetCost(node.position) < GetCost(connection.previousNode.position))
+                        if (GetCost(node.position) < GetCost(connection.previousNode.position))
                             connection.previousNode = node;
                         // do not add connection to open if it is already known
                         continue;
