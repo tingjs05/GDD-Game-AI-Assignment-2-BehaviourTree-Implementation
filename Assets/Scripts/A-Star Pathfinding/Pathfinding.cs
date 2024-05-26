@@ -38,7 +38,6 @@ namespace Astar
 
                 // reset boolean
                 pathFound = false;
-                // reset previous node
                 previousNode = null;
                 // reset open and closed lists
                 ResetLists();
@@ -52,7 +51,21 @@ namespace Astar
                 open.Add(startNode);
 
                 // find path
-                while (!pathFound)
+                // while (!pathFound)
+                // {
+                //     // ensure open has items inside
+                //     if (open.Count <= 0)
+                //     {
+                //         Debug.LogError("Pathfinding.cs: open list is not set. ");
+                //         break;
+                //     }
+                //     // sort open list based on distance to end point
+                //     open = SortList(open);
+                //     // open the closest node to the end point
+                //     OpenNode(open[0]);
+                // }
+
+                for (int i = 0; i < 50; i++)
                 {
                     // ensure open has items inside
                     if (open.Count <= 0)
@@ -83,7 +96,7 @@ namespace Astar
                 }
 
                 if (!pathFound) Debug.Log("path not found!");
-                // Debug.Log(path.Count);
+                Debug.Log(path.Count);
                 
                 // return path
                 return path;
@@ -120,8 +133,8 @@ namespace Astar
                     {
                         // if the current node is cheaper than the connection's previous node
                         // change the previous node connection to current node
-                        if (GetCombinedCost(node.position, connection.position) < 
-                            GetCombinedCost(connection.previousNode.position, connection.position))
+                        if (Vector3.Distance(node.position, startNode.position) < 
+                            Vector3.Distance(connection.previousNode.position, startNode.position))
                                 connection.previousNode = node;
                         // do not add connection to open if it is already known
                         continue;
@@ -131,9 +144,6 @@ namespace Astar
                     // if node is not seen before, add to open list
                     open.Add(connection);
                 }
-                // cache previous node if it is not null, and the previous node is a connection to current node
-                if (previousNode != null && node.connections.Contains(previousNode)) node.previousNode = previousNode;
-                previousNode = node;
                 // move node to closed list after visiting it
                 closed.Add(node);
             }
@@ -146,7 +156,8 @@ namespace Astar
                     Debug.LogError("Pathfinding.cs: path calculation failed due to null node. ");
                     return;
                 }
-                path.Insert(0, node.previousNode);
+                // insert previous node into path
+                if (!path.Contains(node.previousNode)) path.Insert(0, node.previousNode);
                 // end path calculation if current node is start node
                 if (node.Equals(startNode)) pathFound = true;
             }
@@ -176,27 +187,11 @@ namespace Astar
                 return tempList;
             }
 
-            // methods to find cost of node
-            int GetCombinedCost(Vector3 previousNode, Vector3 currentNode)
+            // method to find cost of node
+            float GetCost(Vector3 nodePos)
             {
-                return GetCost(previousNode) + FindManhattanDistance(previousNode, currentNode);
-            }
-
-            int GetCost(Vector3 nodePos)
-            {
-                return FindManhattanDistance(startNode.position, nodePos) + 
-                    FindManhattanDistance(endNode.position, nodePos);
-            }
-
-            int FindManhattanDistance(Vector3 start, Vector3 end)
-            {
-                return Mathf.Abs(ConvertToInt(end.x) - ConvertToInt(start.x)) + 
-                    Mathf.Abs(ConvertToInt(end.z) - ConvertToInt(start.z));
-            }
-
-            int ConvertToInt(float num)
-            {
-                return (int) Mathf.Round(num * 10);
+                return Vector3.Distance(startNode.position, nodePos) + 
+                    Vector3.Distance(endNode.position, nodePos);
             }
         }
     }
