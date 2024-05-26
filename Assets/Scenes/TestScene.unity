@@ -1040,7 +1040,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startPos: {x: -7.35, y: 0, z: 2.46}
-  endPos: {x: 7.41, y: 0, z: -4.01}
+  endPos: {x: -6.93, y: 0, z: -2.36}
 --- !u!1 &1039706397
 GameObject:
   m_ObjectHideFlags: 0

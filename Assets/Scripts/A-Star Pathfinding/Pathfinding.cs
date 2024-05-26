@@ -41,8 +41,7 @@ namespace Astar
                 // reset previous node
                 previousNode = null;
                 // reset open and closed lists
-                open.Clear();
-                closed.Clear();
+                ResetLists();
                 // reset path list
                 path.Clear();
                 // get start and end nodes
@@ -84,9 +83,17 @@ namespace Astar
                 }
 
                 if (!pathFound) Debug.Log("path not found!");
-
+                Debug.Log(path.Count);
+                
                 // return path
                 return path;
+            }
+
+            // method to reset lists
+            public void ResetLists()
+            {
+                open.Clear();
+                closed.Clear();
             }
 
             // code to "open" a node, and check it out
@@ -102,17 +109,18 @@ namespace Astar
                     if (connection.Equals(endNode))
                     {
                         // set previous node
-                        endNode.previousNode = node;
+                        connection.previousNode = node;
                         // complete path find
                         pathFound = true;
-                        return;
+                        // break out of loop when found end node, no need to continue searching
+                        break;
                     }
                     // find if the node from the connection is already known
                     if (open.Contains(connection))
                     {
                         // if the current node is cheaper than the connection's previous node
                         // change the previous node connection to current node
-                        if (GetCost(node.position) < GetCost(connection.previousNode.position))
+                        if (connection.previousNode == null || GetCost(node.position) < GetCost(connection.previousNode.position))
                             connection.previousNode = node;
                         // do not add connection to open if it is already known
                         continue;

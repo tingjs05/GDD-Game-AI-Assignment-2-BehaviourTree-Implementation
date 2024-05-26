@@ -25,7 +25,7 @@ public class Test : MonoBehaviour
         if (!(NodeManager.Instance.nodes.Count <= 0))
         {
             run = true;
-            pathfinder.FindPath(startPos, endPos);
+            path = pathfinder.FindPath(startPos, endPos);
         }
     }
     
@@ -36,7 +36,7 @@ public class Test : MonoBehaviour
         Gizmos.color = Color.magenta;
         Gizmos.DrawSphere(endPos, 0.3f);
 
-
+        // if pathfinder cannot be found, dont draw gizmos for path finding
         if (pathfinder == null) return;
         
         // draw horizon nodes
