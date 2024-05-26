@@ -13,6 +13,7 @@ namespace Astar
             public Vector3 position { get; private set; }
             public List<Node> connections { get; private set; } = new List<Node>();
             public Node previousNode;
+            public int G, H;
 
             // constructor
             public Node(Vector3 _position)

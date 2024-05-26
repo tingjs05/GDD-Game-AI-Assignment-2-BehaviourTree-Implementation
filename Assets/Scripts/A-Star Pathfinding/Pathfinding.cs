@@ -52,12 +52,6 @@ namespace Astar
                 // find path
                 while (!pathFound)
                 {
-                    // ensure open has items inside
-                    if (open.Count <= 0)
-                    {
-                        Debug.LogError("Pathfinding.cs: open list is not set. ");
-                        break;
-                    }
                     // sort open list based on distance to end point
                     open = SortList(open);
                     // open the closest node to the end point
@@ -100,6 +94,12 @@ namespace Astar
                 // remove from open list since its already opened
                 open.Remove(node);
 
+                // reset G and H values of node
+                // get H value which is manhattan distance to end node
+                node.H = FindManhattanDistance(node.position, endNode.position);
+                // get G value, if no previous node, value is 0 (start node), otherwise its the G value of previous node + distance travelled from previous node
+                node.G = node.Equals(startNode) || node.previousNode == null? 0 : node.previousNode.G + FindManhattanDistance(node.position, node.previousNode.position);
+
                 // add all connected nodes to open list
                 foreach (Node connection in node.connections)
                 {
@@ -111,7 +111,7 @@ namespace Astar
                     {
                         // if the current node is cheaper than the connection's previous node
                         // change the connection node's previous node connection to current node
-                        if (IsCloserToStartNode(node, connection.previousNode)) connection.previousNode = node;
+                        if (node.G < connection.previousNode.G) connection.previousNode = node;
                         // do not add connection to open if it is already known
                         continue;
                     }
@@ -166,8 +166,7 @@ namespace Astar
             // methods to find cost of node
             int GetCost(Node node)
             {
-                return FindManhattanDistance(startNode.position, node.position) + 
-                    FindManhattanDistance(node.position, endNode.position);
+                return node.G + node.H;
             }
 
             int FindManhattanDistance(Vector3 start, Vector3 end)
@@ -180,40 +179,6 @@ namespace Astar
             int ConvertToInt(float num)
             {
                 return (int) Mathf.Round(num * 10);
-            }
-
-            // method to compare distance to start node
-            bool IsCloserToStartNode(Node currentNode, Node nodeToCompare)
-            {
-                // return boolean depending on if distance to current node is smaller than distance to node to compare
-                return DistanceTravelledFromStart(currentNode) < DistanceTravelledFromStart(nodeToCompare);
-            }
-
-            int DistanceTravelledFromStart(Node node)
-            {
-                // do not run if node or previous node is null
-                if (node == null || node.previousNode == null) return -1;
-                // create a temp node
-                Node workingNode = node.previousNode;
-                // create variable to calculate total distance travelled
-                int distanceTraveled = 0;
-                // loop through previous nodes to find path to start
-                while (!workingNode.Equals(startNode))
-                {
-                    // break out of loop of node cannot be found, and return an error value
-                    if (workingNode == null || workingNode.previousNode == null)
-                    {
-                        // log error
-                        Debug.LogError("Pathfinding.cs: Distance travelled from start cannot be calculated due to disconnected nodes!");
-                        return -1;
-                    }
-                    // increment distance travelled between current working node, and previous node
-                    distanceTraveled += FindManhattanDistance(workingNode.previousNode.position, workingNode.position);
-                    // set current working node to previous node
-                    workingNode = workingNode.previousNode;
-                }
-                // return total distance travelled
-                return distanceTraveled;
             }
         }
     }
