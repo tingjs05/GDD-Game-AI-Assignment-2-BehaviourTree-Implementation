@@ -185,17 +185,9 @@ namespace Astar
             // method to compare distance to start node
             bool IsCloserToStartNode(Node currentNode, Node nodeToCompare)
             {
-                // use manhattan distance first
-                float d1 = FindManhattanDistance(startNode.position, currentNode.position);
-                float d2 = FindManhattanDistance(startNode.position, nodeToCompare.position);
-                // if both values are equal, use more precise calculation
-                if (d1 == d2)
-                {
-                    d1 = Vector3.Distance(startNode.position, currentNode.position);
-                    d2 = Vector3.Distance(startNode.position, nodeToCompare.position);
-                }
                 // return boolean depending on if distance to current node is smaller than distance to node to compare
-                return d1 < d2;
+                return FindManhattanDistance(startNode.position, currentNode.position) < 
+                    FindManhattanDistance(startNode.position, nodeToCompare.position);
             }
         }
     }
