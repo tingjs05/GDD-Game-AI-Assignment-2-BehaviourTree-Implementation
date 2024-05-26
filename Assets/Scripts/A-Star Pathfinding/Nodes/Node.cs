@@ -22,14 +22,14 @@ namespace Astar
             }
 
             // public method to generate connections between nodes
-            public virtual void GenerateConnections(float frequency, bool includeDiagonal = true)
+            public virtual void GenerateConnections(float frequency)
             {
                 // reset connections
                 connections.Clear();
                 // do not run if node manager instance is not found
                 if (NodeManager.Instance == null) return;
                 // set the max distance for a connection between nodes
-                float maxDistance = includeDiagonal? (float) System.Math.Round(frequency * Mathf.Sqrt(2), 2) : frequency;
+                float maxDistance = (float) System.Math.Round(frequency * Mathf.Sqrt(2), 2);
                 // loop through each node to find which nodes can form connection
                 foreach (Node node in NodeManager.Instance.nodes)
                 {
