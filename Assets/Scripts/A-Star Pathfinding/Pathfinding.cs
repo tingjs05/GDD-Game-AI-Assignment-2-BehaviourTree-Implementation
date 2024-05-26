@@ -132,10 +132,12 @@ namespace Astar
                     Debug.LogError("Pathfinding.cs: path calculation failed due to null node. ");
                     return;
                 }
-                // insert previous node into path
-                path.Insert(0, node.previousNode);
                 // end path calculation if current node is start node
-                if (node.Equals(startNode)) pathFound = true;
+                if (node.Equals(startNode)) 
+                    pathFound = true;
+                // otherwise add the previous node into the list
+                else
+                    path.Insert(0, node.previousNode);
             }
             
             // method to sort list based on cost, where cost = distance travelled + remaining distance

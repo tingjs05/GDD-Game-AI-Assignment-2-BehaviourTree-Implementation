@@ -13,7 +13,7 @@ namespace Astar
             public float speed = 1f;
             public float stoppingDistance = 1f;
             public bool showGizmos = true;
-            public float remainingDistance { get; private set; } = -1f;
+            public float remainingDistance { get; private set; } = 0f;
 
             // variables to control path following
             List<Node> path;
@@ -37,16 +37,16 @@ namespace Astar
             // Update is called once per frame
             void Update()
             {
-                // follow path if path is not null
-                if (path != null) FollowPath();
+                // follow path if path is not null and contains nodes
+                if (path != null && path.Count > 0) FollowPath();
             }
 
             void FollowPath()
             {
-                // set remaining distance
+                // update remaining distance
                 remainingDistance = Vector3.Distance(transform.position, destination);
                 // add force to move agent in the direction of waypoint
-                rb.AddForce((path[currentWayPoint].position - transform.position).normalized * speed * Time.deltaTime);
+                rb.AddForce((path[currentWayPoint].position - transform.position).normalized * speed);
                 // check if reached waypoint
                 if (Vector3.Distance(transform.position, path[currentWayPoint].position) <= stoppingDistance)
                 {
@@ -57,6 +57,7 @@ namespace Astar
                     // reset all path following variables
                     path = null;
                     currentWayPoint = -1;
+                    remainingDistance = 0f;
                 }
             }
 
@@ -69,6 +70,16 @@ namespace Astar
                 currentWayPoint = 0;
                 // get path to destination
                 path = pathfinder.FindPath(transform.position, _destination);
+                // set remaining distance
+                remainingDistance = Vector3.Distance(transform.position, destination);
+            }
+
+            public void Warp(Vector3 position)
+            {
+                // get to nearest node
+                Vector3 newPosition = NodeManager.Instance.GetNearestNode(position).position;
+                // set only the x and z positions
+                transform.position = new Vector3(newPosition.x, transform.position.y, newPosition.z);
             }
 
             void OnDrawGizmos()
