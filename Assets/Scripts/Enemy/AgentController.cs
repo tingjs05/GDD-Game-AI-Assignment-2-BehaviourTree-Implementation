@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace Agent
 {
-    [RequireComponent(typeof(NavMeshAgent))]
+    [RequireComponent(typeof(Astar.Pathfinding.Agent))]
     public class AgentController : MonoBehaviour, IDamagable
     {
         // inspector values
@@ -53,7 +53,7 @@ namespace Agent
         [SerializeField] public GameObject trapPrefab;
 
         // movement AI
-        public NavMeshAgent Agent { get; private set; }
+        public Astar.Pathfinding.Agent Agent { get; private set; }
 
         // public booleans
         [HideInInspector]
@@ -66,7 +66,7 @@ namespace Agent
         void Start()
         {
             // get nav agent
-            Agent = GetComponent<NavMeshAgent>();
+            Agent = GetComponent<Astar.Pathfinding.Agent>();
 
             // set booleans
             Stunned = false;
@@ -274,17 +274,24 @@ namespace Agent
         // get a random point around a center point (usually self)
         public bool RandomPoint(Vector3 center, float range, out Vector3 result)
         {
-            // get a random point in a sphere
-            Vector3 randomPoint = center + Random.insideUnitSphere * range;
-            // get the position on the random point on the navmesh
-            if (NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, 1f, NavMesh.AllAreas))
-            {
-                result = hit.position;
-                return true;
-            }
-            result = Vector3.zero;
-            return false;
+            result = center + Random.insideUnitSphere * range;
+            return true;
         }
+
+        // this method is for using unity's navmesh agent
+        // public bool RandomPoint(Vector3 center, float range, out Vector3 result)
+        // {
+        //     // get a random point in a sphere
+        //     Vector3 randomPoint = center + Random.insideUnitSphere * range;
+        //     // get the position on the random point on the navmesh
+        //     if (NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, 1f, NavMesh.AllAreas))
+        //     {
+        //         result = hit.position;
+        //         return true;
+        //     }
+        //     result = Vector3.zero;
+        //     return false;
+        // }
 
         // method to set behaviour indicator text
         public void SetText(string text)

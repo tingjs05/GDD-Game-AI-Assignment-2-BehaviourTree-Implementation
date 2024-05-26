@@ -27,7 +27,7 @@ public class PlayerController : MonoBehaviour, IDamagable
     [SerializeField] float moveSpeed = 5f;
     [SerializeField] float pushDuration = 1.2f;
     [SerializeField] float stunDuration = 2.5f;
-    [SerializeField] float interationRange = 1f;
+    [SerializeField] float interactionRange = 1f;
     [SerializeField] Slider healthBar;
     [SerializeField] GameObject controlHint;
 
@@ -90,7 +90,7 @@ public class PlayerController : MonoBehaviour, IDamagable
     // gizmos
     void OnDrawGizmosSelected() 
     {
-        Gizmos.DrawWireSphere(transform.position, interationRange);
+        Gizmos.DrawWireSphere(transform.position, interactionRange);
     }
 
     // interface methods
@@ -117,10 +117,12 @@ public class PlayerController : MonoBehaviour, IDamagable
     {
         // reset move direction
         MoveDir = Vector3.zero;
+        // reset velocity
+        rb.velocity = Physics.gravity;
         // allow stun
         canBeStunned = true;
         // check transition to moving
-        if (new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")) == Vector2.zero) return;
+        if (new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")) == Vector2.zero) return;
         currentState = State.MOVING;
     }
 
@@ -130,7 +132,7 @@ public class PlayerController : MonoBehaviour, IDamagable
         canBeStunned = true;
 
         // get move direction
-        MoveDir = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical")).normalized;
+        MoveDir = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical")).normalized;
         
         // check for state transition to idle
         if (MoveDir == Vector3.zero)
@@ -140,7 +142,8 @@ public class PlayerController : MonoBehaviour, IDamagable
         }
 
         // check for running (shift pressed), if running, multiple speed by 1.5f.
-        rb.AddForce(MoveDir * moveSpeed * (Input.GetKey(KeyCode.LeftShift)? 1.5f : 1f));
+        rb.velocity = MoveDir * moveSpeed * (Input.GetKey(KeyCode.LeftShift)? 1.5f : 1f);
+        rb.velocity += Physics.gravity;
     }
 
     void pushing()
@@ -149,6 +152,8 @@ public class PlayerController : MonoBehaviour, IDamagable
         canBeStunned = false;
         // reset move direction
         MoveDir = Vector3.zero;
+        // reset velocity
+        rb.velocity = Physics.gravity;
 
         if (timeElapsed >= pushDuration)
         {
@@ -163,6 +168,8 @@ public class PlayerController : MonoBehaviour, IDamagable
     {
         // reset move direction
         MoveDir = Vector3.zero;
+        // reset velocity
+        rb.velocity = Physics.gravity;
         // allow stun
         canBeStunned = true;
         // do death stuff
@@ -174,6 +181,8 @@ public class PlayerController : MonoBehaviour, IDamagable
     {
         // reset move direction
         MoveDir = Vector3.zero;
+        // reset velocity
+        rb.velocity = Physics.gravity;
         // double stunning not allowed
         canBeStunned = false;
         // wait for stun duration
@@ -188,7 +197,7 @@ public class PlayerController : MonoBehaviour, IDamagable
         // ensure state not in pushing
         if (currentState == State.PUSHING) return;
         // check if there are obstacles nearby
-        Collider[] hit = Physics.OverlapSphere(transform.position, interationRange, obstacleMask);
+        Collider[] hit = Physics.OverlapSphere(transform.position, interactionRange, obstacleMask);
         // exit function if no nearby obstacles are found, and hide UI
         if (hit.Length <= 0)
         {

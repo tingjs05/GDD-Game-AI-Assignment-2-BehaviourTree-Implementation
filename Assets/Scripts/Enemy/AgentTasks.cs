@@ -40,6 +40,8 @@ namespace Agent
         {
             // set text
             bot.SetText("Dead");
+            // log end of game
+            Debug.Log("Enemy Died: Mission Sucessful!");
             // destroy enemy
             Destroy(gameObject);
             // complete task

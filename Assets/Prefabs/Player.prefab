@@ -245,10 +245,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 5
-  moveSpeed: 0.55
+  moveSpeed: 1.2
   pushDuration: 1.2
   stunDuration: 2.5
-  interationRange: 0.8
+  interactionRange: 0.8
   healthBar: {fileID: 7259440463244464692}
   controlHint: {fileID: 0}
 --- !u!1001 &4857938643509598924
