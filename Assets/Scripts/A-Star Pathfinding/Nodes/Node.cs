@@ -10,8 +10,8 @@ namespace Astar
         public class Node
         {
             // public variables
-            public Vector3 position;
-            public List<Node> connections = new List<Node>();
+            public Vector3 position { get; private set; }
+            public List<Node> connections { get; private set; } = new List<Node>();
             public Node previousNode;
 
             // constructor

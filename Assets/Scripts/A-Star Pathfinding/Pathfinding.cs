@@ -83,7 +83,7 @@ namespace Astar
                 }
 
                 if (!pathFound) Debug.Log("path not found!");
-                Debug.Log(path.Count);
+                // Debug.Log(path.Count);
                 
                 // return path
                 return path;
@@ -120,16 +120,19 @@ namespace Astar
                     {
                         // if the current node is cheaper than the connection's previous node
                         // change the previous node connection to current node
-                        if (connection.previousNode == null || GetCost(node.position) < GetCost(connection.previousNode.position))
-                            connection.previousNode = node;
+                        if (GetCombinedCost(node.position, connection.position) < 
+                            GetCombinedCost(connection.previousNode.position, connection.position))
+                                connection.previousNode = node;
                         // do not add connection to open if it is already known
                         continue;
                     }
+                    // set connection to current node
+                    connection.previousNode = node;
                     // if node is not seen before, add to open list
                     open.Add(connection);
                 }
-                // cache previous node if it is not null
-                if (previousNode != null) node.previousNode = previousNode;
+                // cache previous node if it is not null, and the previous node is a connection to current node
+                if (previousNode != null && node.connections.Contains(previousNode)) node.previousNode = previousNode;
                 previousNode = node;
                 // move node to closed list after visiting it
                 closed.Add(node);
@@ -149,29 +152,38 @@ namespace Astar
             }
             
             // method to sort list based on cost, where cost = distance travelled + remaining distance
+            // using bubble sort
             List<Node> SortList(List<Node> list)
             {
                 // temporary list to apply sorting to
                 List<Node> tempList = new List<Node>(list);
-                // store current nearest node
-                Node nearestNode = tempList[0];
+                // temporary variable to store node when swapping items in list
+                Node tempNode;
                 // sort the list according to cost (distance) from position
                 for (int i = 0; i < tempList.Count - 1; i++)
                 {
-                    for (int j = 0; j < tempList.Count - i; j++)
+                    for (int j = 0; j < tempList.Count - i - 1; j++)
                     {
-                        if (GetCost(tempList[j + i].position) < GetCost(nearestNode.position))
-                            nearestNode = tempList[j + i];
+                        // if next item is cheaper, swap nodes
+                        if (GetCost(tempList[j + 1].position) < GetCost(tempList[j].position))
+                        {
+                            // swap items
+                            tempNode = tempList[i];
+                            tempList[i] = tempList[j];
+                            tempList[j] = tempNode;
+                        }
                     }
-                    // move nearest node to back of working list
-                    tempList.Remove(nearestNode);
-                    tempList.Insert(i, nearestNode);
                 }
                 // return sorted temp list
                 return tempList;
             }
 
             // methods to find cost of node
+            int GetCombinedCost(Vector3 previousNode, Vector3 currentNode)
+            {
+                return GetCost(previousNode) + FindManhattanDistance(previousNode, currentNode);
+            }
+
             int GetCost(Vector3 nodePos)
             {
                 return FindManhattanDistance(startNode.position, nodePos) + 
