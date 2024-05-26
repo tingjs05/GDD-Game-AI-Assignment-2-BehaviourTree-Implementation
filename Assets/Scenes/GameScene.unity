@@ -2602,6 +2602,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy
       objectReference: {fileID: 0}
+    - target: {fileID: 4145416102651812882, guid: 05735df5653361f4ba1b937092a3b013, type: 3}
+      propertyPath: trapPrefab
+      value: 
+      objectReference: {fileID: 2134043918680145957, guid: 0c5257c1295826c4686e0303f74954fe, type: 3}
     - target: {fileID: 9181443315559648784, guid: 05735df5653361f4ba1b937092a3b013, type: 3}
       propertyPath: stateText
       value: 
