@@ -101,7 +101,7 @@ namespace Astar
                     Gizmos.color = path != null && path.Contains(node)? Color.yellow : Color.blue;
                     // show connection to previous node
                     if (node.previousNode != null) Debug.DrawRay(node.position, node.previousNode.position - node.position, Gizmos.color);
-                    Gizmos.DrawSphere(node.position, 0.2f);
+                    Gizmos.DrawSphere(node.position, 0.15f);
                 }
 
                 // draw visited nodes
@@ -111,7 +111,7 @@ namespace Astar
                     Gizmos.color = path != null && path.Contains(node)? Color.yellow : Color.cyan;
                     // show connection to previous node
                     if (node.previousNode != null) Debug.DrawRay(node.position, node.previousNode.position - node.position, Gizmos.color);
-                    Gizmos.DrawSphere(node.position, 0.2f);
+                    Gizmos.DrawSphere(node.position, 0.15f);
                 }
             }
         }
