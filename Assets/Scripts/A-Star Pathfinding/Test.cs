@@ -42,28 +42,20 @@ public class Test : MonoBehaviour
         // draw horizon nodes
         foreach (Node node in pathfinder.open)
         {
-            Gizmos.color = Color.blue;
             // if node is part of path, draw it as yellow
-            if (path != null && path.Contains(node))
-            {
-                Gizmos.color = Color.yellow;
-                // draw connection to rest of the path if there is a previous node set
-                if (node.previousNode != null) Debug.DrawRay(node.position, node.previousNode.position - node.position, Color.yellow);
-            }
+            Gizmos.color = path != null && path.Contains(node)? Color.yellow : Color.blue;
+            // show connection to previous node
+            if (node.previousNode != null) Debug.DrawRay(node.position, node.previousNode.position - node.position, Gizmos.color);
             Gizmos.DrawSphere(node.position, 0.2f);
         }
 
         // draw visited nodes
         foreach (Node node in pathfinder.closed)
         {
-            Gizmos.color = Color.cyan;
             // if node is part of path, draw it as yellow
-            if (path != null && path.Contains(node))
-            {
-                Gizmos.color = Color.yellow;
-                // draw connection to rest of the path if there is a previous node set
-                if (node.previousNode != null) Debug.DrawRay(node.position, node.previousNode.position - node.position, Color.yellow);
-            }
+            Gizmos.color = path != null && path.Contains(node)? Color.yellow : Color.cyan;
+            // show connection to previous node
+            if (node.previousNode != null) Debug.DrawRay(node.position, node.previousNode.position - node.position, Gizmos.color);
             Gizmos.DrawSphere(node.position, 0.2f);
         }
     }

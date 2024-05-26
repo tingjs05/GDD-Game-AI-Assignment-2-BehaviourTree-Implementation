@@ -47,7 +47,7 @@ namespace Astar
                 for (int i = 0; i < nodes.Count; i++)
                 {
                     if (Vector3.Distance(position, nodes[i].position) <= Vector3.Distance(position, currentNearestNode.position))
-                            currentNearestNode = nodes[i];
+                        currentNearestNode = nodes[i];
                 }
                 // return nearest node
                 return currentNearestNode;
@@ -64,9 +64,9 @@ namespace Astar
                 for (int i = 0; i < nodes.Count; i++)
                 {
                     if (Vector3.Distance(position1, nodes[i].position) < Vector3.Distance(position1, currentNearestNode1.position))
-                            currentNearestNode1 = nodes[i];
+                        currentNearestNode1 = nodes[i];
                     if (Vector3.Distance(position2, nodes[i].position) < Vector3.Distance(position2, currentNearestNode2.position))
-                            currentNearestNode2 = nodes[i];
+                        currentNearestNode2 = nodes[i];
                 }
                 // return nearest node
                 return (currentNearestNode1, currentNearestNode2);
