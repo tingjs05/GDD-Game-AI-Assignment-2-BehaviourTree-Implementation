@@ -46,9 +46,10 @@ namespace Astar
                 // update remaining distance
                 remainingDistance = Vector3.Distance(transform.position, destination);
                 // add force to move agent in the direction of waypoint
-                rb.AddForce((path[currentWayPoint].position - transform.position).normalized * speed);
+                rb.velocity = (path[currentWayPoint].position - transform.position).normalized * speed;
+                rb.velocity += Physics.gravity;
                 // check if reached waypoint
-                if (Vector3.Distance(transform.position, path[currentWayPoint].position) <= stoppingDistance)
+                if (Vector3.Distance(transform.position, path[currentWayPoint].position) < stoppingDistance)
                 {
                     // iterate current waypoint
                     currentWayPoint += 1;

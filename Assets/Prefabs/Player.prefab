@@ -245,7 +245,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 5
-  moveSpeed: 0.55
+  moveSpeed: 1.2
   pushDuration: 1.2
   stunDuration: 2.5
   interactionRange: 0.8
