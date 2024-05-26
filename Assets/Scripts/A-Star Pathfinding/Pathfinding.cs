@@ -186,8 +186,34 @@ namespace Astar
             bool IsCloserToStartNode(Node currentNode, Node nodeToCompare)
             {
                 // return boolean depending on if distance to current node is smaller than distance to node to compare
-                return FindManhattanDistance(startNode.position, currentNode.position) < 
-                    FindManhattanDistance(startNode.position, nodeToCompare.position);
+                return DistanceTravelledFromStart(currentNode) < DistanceTravelledFromStart(nodeToCompare);
+            }
+
+            int DistanceTravelledFromStart(Node node)
+            {
+                // do not run if node or previous node is null
+                if (node == null || node.previousNode == null) return -1;
+                // create a temp node
+                Node workingNode = node.previousNode;
+                // create variable to calculate total distance travelled
+                int distanceTraveled = 0;
+                // loop through previous nodes to find path to start
+                while (!workingNode.Equals(startNode))
+                {
+                    // break out of loop of node cannot be found, and return an error value
+                    if (workingNode == null || workingNode.previousNode == null)
+                    {
+                        // log error
+                        Debug.LogError("Pathfinding.cs: Distance travelled from start cannot be calculated due to disconnected nodes!");
+                        return -1;
+                    }
+                    // increment distance travelled between current working node, and previous node
+                    distanceTraveled += FindManhattanDistance(workingNode.previousNode.position, workingNode.position);
+                    // set current working node to previous node
+                    workingNode = workingNode.previousNode;
+                }
+                // return total distance travelled
+                return distanceTraveled;
             }
         }
     }
