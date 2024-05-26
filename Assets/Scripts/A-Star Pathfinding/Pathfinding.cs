@@ -69,20 +69,10 @@ namespace Astar
                 // reset path found boolean
                 pathFound = false;
                 // calculate path
-                // while (!pathFound)
-                // {
-                //     CalculatePath(path[0]);
-                // }
-
-                for (int i = 0; i < 50; i++)
+                while (!pathFound)
                 {
-                    if (pathFound) break;
                     CalculatePath(path[0]);
                 }
-
-                if (!pathFound) Debug.Log("path not found!");
-                Debug.Log(path.Count);
-                
                 // return path
                 return path;
             }
@@ -97,24 +87,22 @@ namespace Astar
             // code to "open" a node, and check it out
             void OpenNode(Node node)
             {
+                // if connection is the end point, set the previous node as current node
+                // and mark path found as true
+                if (node.Equals(endNode))
+                {
+                    // complete path find
+                    pathFound = true;
+                    // break out of loop when found end node, no need to continue searching
+                    return;
+                }
+
                 // remove from open list since its already opened
                 open.Remove(node);
 
                 // add all connected nodes to open list
                 foreach (Node connection in node.connections)
                 {
-                    // if connection is the end point, set the previous node as current node, 
-                    // and mark path found as true
-                    if (connection.Equals(endNode))
-                    {
-                        // set previous node
-                        connection.previousNode = node;
-                        // complete path find
-                        pathFound = true;
-                        // break out of loop when found end node, no need to continue searching
-                        break;
-                    }
-
                     // do not check connection if connection node is already opened before
                     if (closed.Contains(connection)) continue;
 
@@ -122,12 +110,8 @@ namespace Astar
                     if (open.Contains(connection))
                     {
                         // if the current node is cheaper than the connection's previous node
-                        // change the previous node connection to current node
-                        if (FindManhattanDistance(startNode.position, node.position) < 
-                            FindManhattanDistance(startNode.position, connection.previousNode.position))
-                        {
-                            connection.previousNode = node;
-                        }
+                        // change the connection node's previous node connection to current node
+                        if (IsCloserToStartNode(node, connection.previousNode)) connection.previousNode = node;
                         // do not add connection to open if it is already known
                         continue;
                     }
@@ -142,14 +126,14 @@ namespace Astar
 
             void CalculatePath(Node node)
             {
-                // ensure a previous node is set
-                if (node.previousNode == null)
+                // ensure a previous node is set, assuming it is not the starting node
+                if (node.previousNode == null && !node.Equals(startNode))
                 {
                     Debug.LogError("Pathfinding.cs: path calculation failed due to null node. ");
                     return;
                 }
                 // insert previous node into path
-                if (!path.Contains(node.previousNode)) path.Insert(0, node.previousNode);
+                path.Insert(0, node.previousNode);
                 // end path calculation if current node is start node
                 if (node.Equals(startNode)) pathFound = true;
             }
@@ -180,7 +164,7 @@ namespace Astar
             }
 
             // methods to find cost of node
-            float GetCost(Node node)
+            int GetCost(Node node)
             {
                 return FindManhattanDistance(startNode.position, node.position) + 
                     FindManhattanDistance(node.position, endNode.position);
@@ -188,6 +172,7 @@ namespace Astar
 
             int FindManhattanDistance(Vector3 start, Vector3 end)
             {
+                // return Vector3.Distance(start, end);
                 return Mathf.Abs(ConvertToInt(end.x) - ConvertToInt(start.x)) + 
                     Mathf.Abs(ConvertToInt(end.z) - ConvertToInt(start.z));
             }
@@ -195,6 +180,22 @@ namespace Astar
             int ConvertToInt(float num)
             {
                 return (int) Mathf.Round(num * 10);
+            }
+
+            // method to compare distance to start node
+            bool IsCloserToStartNode(Node currentNode, Node nodeToCompare)
+            {
+                // use manhattan distance first
+                float d1 = FindManhattanDistance(startNode.position, currentNode.position);
+                float d2 = FindManhattanDistance(startNode.position, nodeToCompare.position);
+                // if both values are equal, use more precise calculation
+                if (d1 == d2)
+                {
+                    d1 = Vector3.Distance(startNode.position, currentNode.position);
+                    d2 = Vector3.Distance(startNode.position, nodeToCompare.position);
+                }
+                // return boolean depending on if distance to current node is smaller than distance to node to compare
+                return d1 < d2;
             }
         }
     }
