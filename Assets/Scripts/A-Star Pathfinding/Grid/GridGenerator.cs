@@ -8,7 +8,6 @@ namespace Astar
 {
     namespace Grid
     {
-        [RequireComponent(typeof(NodeManager))]
         public class GridGenerator : MonoBehaviour
         {
             // editor fields
@@ -35,8 +34,19 @@ namespace Astar
             // Start is called before the first frame update
             void Start()
             {
+                // ensure node manager is not null
+                InstantiateNodeManager();
+                // generate grid
                 GenerateGrid();
+                // generate a node at each grid position
                 GenerateNodes();
+            }
+
+            // method to instantiate a new node manager if it is null
+            public void InstantiateNodeManager()
+            {
+                if (NodeManager.Instance != null) return;
+                new NodeManager();
             }
 
             // method to generate the grid

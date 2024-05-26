@@ -1,42 +1,28 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Astar
 {
     namespace Nodes
     {
-        [ExecuteInEditMode]
-        public class NodeManager : MonoBehaviour
+        public class NodeManager
         {
             // static singleton instances
-            public static NodeManager Instance;
+            public static NodeManager Instance { get; private set; }
             // list to store all the nodes
             public List<Node> nodes = new List<Node>();
 
-            // singleton
-            void Awake()
+            // constructor to create a singleton
+            public NodeManager()
             {
-                if (Instance == null)
-                    Instance = this;
-                else if (Instance != this)
-                    Destroy(gameObject);
+                // set instance to 'this' if instance is null
+                // instances that are not set to the public property would be cleaned up by GC
+                Instance ??= this;
             }
 
-            void Update()
-            {
-                // do not run when game is playing
-                if (Application.isPlaying) return;
-
-                // set singleton
-                if (Instance == null)
-                    Instance = this;
-                else if (Instance != this)
-                    Destroy(gameObject);
-            }
-
-            // public methods
+            // public methods to get nearest nodes to position
             public Node GetNearestNode(Vector3 position)
             {
                 // do not run if there are no items in the list

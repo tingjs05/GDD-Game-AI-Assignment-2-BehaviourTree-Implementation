@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using Astar.Nodes;
 
 namespace Astar
 {
@@ -22,7 +23,11 @@ namespace Astar
                 // generate grid
                 if (GUILayout.Button("Generate Grid"))
                 {
+                    // ensure node manager is not null
+                    gridGenerator.InstantiateNodeManager();
+                    // generate grid
                     gridGenerator.GenerateGrid();
+                    // if want to show node connections, need to generate nodes before being able to show
                     if (!gridGenerator.showNodeConnections) return;
                     gridGenerator.GenerateNodes();
                 }
