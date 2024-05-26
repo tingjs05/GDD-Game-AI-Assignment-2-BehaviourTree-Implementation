@@ -65,6 +65,8 @@ namespace Astar
             // public methods
             public void SetDestination(Vector3 _destination)
             {
+                // follw last path if path is not null yet (last destination have not been reached)
+                if (path != null && path.Count > 0) FollowPath();
                 // set destination
                 destination = _destination;
                 // reset current waypoint to first item in path list
