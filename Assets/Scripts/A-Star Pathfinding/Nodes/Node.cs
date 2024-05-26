@@ -22,7 +22,7 @@ namespace Astar
             }
 
             // public method to generate connections between nodes
-            public void GenerateConnections(float frequency, bool includeDiagonal = true)
+            public virtual void GenerateConnections(float frequency, bool includeDiagonal = true)
             {
                 // reset connections
                 connections.Clear();
