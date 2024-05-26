@@ -165,13 +165,11 @@ namespace Astar
                     for (int j = 0; j < tempList.Count - i - 1; j++)
                     {
                         // if next item is cheaper, swap nodes
-                        if (GetCost(tempList[j + 1].position) < GetCost(tempList[j].position))
-                        {
-                            // swap items
-                            tempNode = tempList[i];
-                            tempList[i] = tempList[j];
-                            tempList[j] = tempNode;
-                        }
+                        if (!(GetCost(tempList[j + 1].position) < GetCost(tempList[j].position))) continue;
+                        // swap items
+                        tempNode = tempList[i];
+                        tempList[i] = tempList[j];
+                        tempList[j] = tempNode;
                     }
                 }
                 // return sorted temp list
