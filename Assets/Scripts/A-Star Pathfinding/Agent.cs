@@ -59,6 +59,7 @@ namespace Astar
                     path = null;
                     currentWayPoint = -1;
                     remainingDistance = 0f;
+                    pathfinder.ResetLists();
                 }
             }
 
