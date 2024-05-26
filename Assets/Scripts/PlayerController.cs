@@ -27,7 +27,7 @@ public class PlayerController : MonoBehaviour, IDamagable
     [SerializeField] float moveSpeed = 5f;
     [SerializeField] float pushDuration = 1.2f;
     [SerializeField] float stunDuration = 2.5f;
-    [SerializeField] float interationRange = 1f;
+    [SerializeField] float interactionRange = 1f;
     [SerializeField] Slider healthBar;
     [SerializeField] GameObject controlHint;
 
@@ -90,7 +90,7 @@ public class PlayerController : MonoBehaviour, IDamagable
     // gizmos
     void OnDrawGizmosSelected() 
     {
-        Gizmos.DrawWireSphere(transform.position, interationRange);
+        Gizmos.DrawWireSphere(transform.position, interactionRange);
     }
 
     // interface methods
@@ -188,7 +188,7 @@ public class PlayerController : MonoBehaviour, IDamagable
         // ensure state not in pushing
         if (currentState == State.PUSHING) return;
         // check if there are obstacles nearby
-        Collider[] hit = Physics.OverlapSphere(transform.position, interationRange, obstacleMask);
+        Collider[] hit = Physics.OverlapSphere(transform.position, interactionRange, obstacleMask);
         // exit function if no nearby obstacles are found, and hide UI
         if (hit.Length <= 0)
         {
