@@ -62,6 +62,9 @@ namespace Agent
         // coroutine manager
         [HideInInspector] public Coroutine coroutine;
 
+        // public event that is invoked when bot is stunned
+        public event System.Action StunEvent;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -143,6 +146,8 @@ namespace Agent
         {
             if (!CanStun) return;
             Stunned = true;
+            // invoke event when stunned
+            StunEvent?.Invoke();
         }
 
         // trap mechanic

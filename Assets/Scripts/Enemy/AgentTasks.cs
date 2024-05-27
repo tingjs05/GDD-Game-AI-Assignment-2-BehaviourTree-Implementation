@@ -12,8 +12,8 @@ namespace Agent
         PandaBehaviour panda;
         AgentController bot;
 
-        // public boolean to manage task completion
-        [HideInInspector] public bool taskCompleted;
+        // boolean to manage task completion
+        bool taskCompleted;
 
         // Start is called before the first frame update
         void Start()
@@ -22,8 +22,18 @@ namespace Agent
             panda = GetComponent<PandaBehaviour>();
             bot = GetComponent<AgentController>();
 
+            // subscribe to stun event
+            bot.StunEvent += HandleStun;
+
             // set task completed boolean
             taskCompleted = false;
+        }
+
+        // stun event handler
+        void HandleStun()
+        {
+            // when stun, mark current task as completed to immediately enter stun action node
+            taskCompleted = true;
         }
 
         // priorities tree
@@ -52,7 +62,13 @@ namespace Agent
         [Task]
         bool IsStunned()
         {
-            return bot.Stunned;
+            if (bot.Stunned)
+            {
+                // reset task completed boolean when entering stun action node
+                taskCompleted = false;
+                return true;
+            }
+            return false;
         }
 
         [Task]
